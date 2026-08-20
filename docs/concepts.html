@@ -1,0 +1,737 @@
+<title>OpenRouter Learning Notes</title>
+<style>
+  :root{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6;
+    --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2;
+    --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    --radius:14px; --radius-sm:9px;
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    --font-mono:Consolas,Monaco,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,ui-monospace,monospace;
+    --measure:70ch;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+      --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+      --line:#232E38; --line-2:#2E3B46;
+      --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+      --ok:#35E0A1; --ok-soft:#0E2A22;
+      --shim:#4FC3F7; --shim-soft:#0E2530;
+      --cap:#E0A94A; --cap-soft:#33280F;
+      --blk:#EB7568; --blk-soft:#331815;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+      --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6; --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2; --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+    --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+    --line:#232E38; --line-2:#2E3B46;
+    --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+    --ok:#35E0A1; --ok-soft:#0E2A22; --shim:#4FC3F7; --shim-soft:#0E2530;
+    --cap:#E0A94A; --cap-soft:#33280F; --blk:#EB7568; --blk-soft:#331815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--font-sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    transition:background .4s ease,color .4s ease;
+  }
+  ::selection{background:var(--accent-soft);color:var(--accent-ink)}
+
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent);
+    transition:width .12s linear}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+
+  header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--ground) 86%,transparent);
+    backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);transition:background .4s ease,border-color .4s ease}
+  .top .row{display:flex;align-items:center;gap:16px;min-height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;color:var(--ink)}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .brand b{font-weight:600}
+  .brand span{color:var(--muted)}
+  .top nav{margin-left:auto;display:none;gap:4px}
+  @media(min-width:960px){.top nav{display:flex}}
+  .top nav a{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.02em;color:var(--muted);
+    text-decoration:none;padding:6px 9px;border-radius:7px;transition:color .2s,background .2s}
+  .top nav a:hover{color:var(--ink);background:var(--surface-2)}
+  .top nav a.active{color:var(--accent-ink);background:var(--accent-soft)}
+
+  .theme-btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;
+    padding:7px 13px;transition:border-color .2s,transform .2s,background .3s,color .3s}
+  .theme-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .theme-btn svg{width:15px;height:15px}
+  .theme-btn .ico-moon{display:none}
+  :root[data-theme="dark"] .theme-btn .ico-moon{display:block}
+  :root[data-theme="dark"] .theme-btn .ico-sun{display:none}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .theme-btn .ico-moon{display:block}
+    :root:not([data-theme="light"]) .theme-btn .ico-sun{display:none}
+  }
+
+  .hero{padding:clamp(46px,8vw,88px) 0 clamp(30px,5vw,52px)}
+  .eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent-ink);display:inline-flex;align-items:center;gap:9px;margin:0 0 18px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.025em;font-weight:800;
+    margin:0 0 20px;text-wrap:balance;max-width:18ch}
+  h1 .grad{background:linear-gradient(96deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--ink-2);max-width:60ch;margin:0 0 26px;line-height:1.55}
+  .meta-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 11px;display:inline-flex;gap:7px;align-items:center}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.draft{color:var(--cap);border-color:color-mix(in srgb,var(--cap) 40%,var(--line));background:var(--cap-soft)}
+
+  section{padding:clamp(38px,6vw,66px) 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin:0 0 26px}
+  .sec-num{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);font-weight:600;padding-top:.35em;min-width:2.4em}
+  h2{font-size:clamp(1.5rem,3.2vw,2.05rem);letter-spacing:-.02em;font-weight:750;margin:0;text-wrap:balance;line-height:1.12}
+  .sec-head p{margin:8px 0 0;color:var(--muted);max-width:var(--measure);font-size:1rem}
+  h3{font-size:1.12rem;letter-spacing:-.01em;font-weight:700;margin:30px 0 12px}
+  p{max-width:var(--measure)}
+  a{color:var(--accent-ink);text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px}
+
+  .prose>p{margin:0 0 15px;color:var(--ink-2)}
+
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .cols-4{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .stat .n{font-family:var(--font-mono);font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums}
+  .stat .k{margin-top:9px;font-size:.9rem;color:var(--muted);line-height:1.4}
+
+  .callout{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);background:var(--surface-2);display:flex;gap:14px;align-items:flex-start}
+  .callout .mk{font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+  .callout.key{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}
+  .callout.key .mk{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .callout.key .mk{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .callout.key .mk{color:#04191c}}
+  .callout.warn{background:var(--cap-soft);border-color:color-mix(in srgb,var(--cap) 34%,var(--line))}
+  .callout.warn .mk{background:var(--cap);color:#fff}
+  .callout p{margin:0;color:var(--ink-2);max-width:none}
+
+  code{font-family:var(--font-mono);font-size:.87em;background:var(--surface-3);padding:.12em .42em;border-radius:5px;color:var(--accent-ink);border:1px solid var(--line)}
+  .code{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:16px 0}
+  .code .bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .code .bar .t{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+  .code .bar .dots{display:flex;gap:6px;margin-right:4px}
+  .code .bar .dots i{width:10px;height:10px;border-radius:50%;background:var(--line-2);display:block}
+  .code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:var(--ink-2)}
+  .code pre .c{color:var(--faint)}
+  .code pre .k{color:var(--accent-ink);font-weight:600}
+  .code pre .s{color:var(--ok)}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:640px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface-2);position:sticky;top:0;white-space:nowrap;font-weight:600}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.mono,.mono{font-family:var(--font-mono);font-size:.82rem}
+  td .path{color:var(--accent-ink)}
+  .num-c{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.02em;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.builtin{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+  .pill.shim{background:var(--shim-soft);color:var(--shim);border-color:color-mix(in srgb,var(--shim) 30%,transparent)}
+  .pill.capability{background:var(--cap-soft);color:var(--cap);border-color:color-mix(in srgb,var(--cap) 30%,transparent)}
+  .pill.config{background:var(--blk-soft);color:var(--blk);border-color:color-mix(in srgb,var(--blk) 30%,transparent)}
+  .pill.layer{background:var(--surface-3);color:var(--muted);border-color:var(--line)}
+
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .fbtn{cursor:pointer;font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;transition:all .2s}
+  .fbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .fbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  :root[data-theme="dark"] .fbtn.on{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fbtn.on{color:#04191c}}
+  tr.hide{display:none}
+
+  figure{margin:8px 0 0}
+  .diagram{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+  .diagram svg{width:100%;min-width:640px;height:auto;color:var(--ink);display:block}
+  .dg-box{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+  .dg-band{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+  .dg-nplus{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+  .dg-t{fill:var(--ink);font-family:var(--font-mono);font-size:13px;font-weight:600}
+  .dg-tm{fill:var(--muted);font-family:var(--font-mono);font-size:11px}
+  .dg-ta{fill:var(--accent-ink);font-family:var(--font-mono);font-size:13px;font-weight:700}
+  .dg-arrow{stroke:var(--muted);stroke-width:1.6;fill:none}
+  .dg-lbl{fill:var(--faint);font-family:var(--font-mono);font-size:10.5px}
+  figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;font-style:italic;max-width:var(--measure)}
+
+  .timeline{position:relative;margin-top:8px}
+  .timeline::before{content:"";position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--accent),var(--line));border-radius:2px}
+  @media(min-width:720px){.timeline::before{left:23px}}
+  .phase{position:relative;padding:0 0 22px 56px}
+  @media(min-width:720px){.phase{padding-left:66px}}
+  .phase .node{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:var(--surface);border:1.6px solid var(--accent);color:var(--accent-ink);font-family:var(--font-mono);font-weight:700;font-size:.86rem;box-shadow:var(--shadow);z-index:1}
+  @media(min-width:720px){.phase .node{width:48px;height:48px}}
+  .phase .body{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .phase .body:hover{transform:translateX(3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .phase h3{margin:0 0 4px;font-size:1.08rem}
+  .phase .goal{color:var(--muted);font-size:.92rem;margin:0 0 13px}
+  .phase ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:.92rem}
+  .phase ul li{margin:5px 0}
+  .phase ul li::marker{color:var(--accent)}
+  .exit{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line-2);font-size:.85rem;color:var(--ink-2);display:flex;gap:9px;align-items:flex-start}
+  .exit b{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ok);white-space:nowrap;margin-top:2px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .tag{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);background:var(--surface-3);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .step{display:flex;gap:15px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 18px;box-shadow:var(--shadow);transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateX(3px);border-color:var(--accent)}
+  .step::before{counter-increment:s;content:counter(s);font-family:var(--font-mono);font-weight:700;font-size:.9rem;color:var(--accent-ink);
+    background:var(--accent-soft);border-radius:8px;width:30px;height:30px;display:grid;place-items:center;flex:none}
+  .step div{font-size:.94rem;color:var(--ink-2)}
+  .step div b{color:var(--ink)}
+
+  ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.95rem}
+  ul.clean li .b{color:var(--accent);margin-top:.15em;flex:none}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted)}
+  footer .fx{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  footer .np{font-family:var(--font-mono);font-size:.8rem}
+  footer a{font-weight:600}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+
+<div id="progress" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap row">
+    <span class="brand"><span class="dot"></span><b>LEARNING&nbsp;NOTES</b><span>/ geo-play-ai-intel</span></span>
+    <nav id="toc">
+      <a href="#overview">Overview</a>
+      <a href="#inventory">Concepts</a>
+      <a href="#v1">V1</a>
+      <a href="#v2">V2</a>
+      <a href="#v3">V3</a>
+      <a href="#v4">V4</a>
+      <a href="#deep">Deep dives</a>
+      <a href="#gotchas">Gotchas</a>
+      <a href="#next">Next</a>
+    </nav>
+    <button class="theme-btn" id="theme" aria-label="Toggle colour theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.2 8.2 0 0 1 9.5 4 8.3 8.3 0 1 0 20 14.5Z"/></svg>
+      <span class="lbl">Theme</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow reveal">Revision notes · Built while learning, version by version</p>
+    <h1 class="reveal">Every concept behind a <span class="grad">60-line</span> AI script.</h1>
+    <p class="lede reveal">One small Python file asks a question to an AI model and prints the answer. Underneath it sit about thirty ideas worth knowing — secrets handling, API gateways, message roles, tokens, cost. This is the map of those ideas, in the order they were added.</p>
+    <div class="meta-chips reveal">
+      <span class="chip">project <b>geo-play-ai-intel</b></span>
+      <span class="chip">file <b>main.py</b></span>
+      <span class="chip">gateway <b>OpenRouter</b></span>
+      <span class="chip">model <b>openai/gpt-5.6-luna</b></span>
+      <span class="chip">versions <b>4</b></span>
+    </div>
+  </div>
+
+  <!-- 01 OVERVIEW -->
+  <section id="overview">
+    <div class="sec-head reveal"><span class="sec-num">01</span><div><h2>The whole thing in one sentence</h2><p>Before the details, hold this shape in your head. Everything else is a refinement of it.</p></div></div>
+    <div class="prose reveal">
+      <p><b>Your script sends a question over the internet to a company that owns a big AI model, and prints back what the model says.</b> That's it. The script does not contain any intelligence itself — it is a messenger. Once you accept that, the concepts sort themselves into four natural questions:</p>
+    </div>
+    <div class="grid cols-4 reveal" style="margin:20px 0">
+      <div class="card"><h3 style="margin-top:0;font-size:.98rem">Who am I?</h3><p style="margin:0;color:var(--ink-2);font-size:.9rem">Proving you're allowed to ask. This is the API key, and everything about keeping it secret.</p></div>
+      <div class="card"><h3 style="margin-top:0;font-size:.98rem">Where do I send it?</h3><p style="margin:0;color:var(--ink-2);font-size:.9rem">An address on the internet, and which model at that address should answer.</p></div>
+      <div class="card"><h3 style="margin-top:0;font-size:.98rem">What exactly do I say?</h3><p style="margin:0;color:var(--ink-2);font-size:.9rem">The shape of the request — a list of messages, each with a role.</p></div>
+      <div class="card"><h3 style="margin-top:0;font-size:.98rem">What does it cost?</h3><p style="margin:0;color:var(--ink-2);font-size:.9rem">Tokens, prices per million, and the limits you set to stay cheap.</p></div>
+    </div>
+    <figure class="reveal">
+      <div class="diagram">
+        <svg viewBox="0 0 900 430" role="img" aria-label="Diagram: a secret key file feeds the Python script, which assembles a list of messages and sends them over HTTPS to the OpenRouter gateway. OpenRouter forwards the request to the chosen model, which returns a reply and a token count. A dashed note marks that nothing is remembered between runs.">
+          <defs>
+            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><polygon points="0,0 9,4.5 0,9" fill="var(--muted)"/></marker>
+            <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><polygon points="0,0 9,4.5 0,9" fill="var(--accent)"/></marker>
+          </defs>
+
+          <!-- .env -->
+          <rect class="dg-box" x="24" y="150" width="150" height="66" rx="11"/>
+          <text class="dg-t" x="99" y="180" text-anchor="middle">.env</text>
+          <text class="dg-tm" x="99" y="199" text-anchor="middle">secret key, never</text>
+          <text class="dg-tm" x="99" y="212" text-anchor="middle">committed to git</text>
+
+          <line class="dg-arrow" x1="174" y1="183" x2="222" y2="183" marker-end="url(#ah)"/>
+          <text class="dg-lbl" x="178" y="175">loaded</text>
+
+          <!-- script -->
+          <rect class="dg-band" x="224" y="118" width="200" height="130" rx="12"/>
+          <text class="dg-ta" x="324" y="145" text-anchor="middle">main.py</text>
+          <text class="dg-tm" x="324" y="168" text-anchor="middle">builds a message list:</text>
+          <text class="dg-tm" x="324" y="186" text-anchor="middle">[system?] + [user]</text>
+          <text class="dg-tm" x="324" y="210" text-anchor="middle">picks the model slug</text>
+          <text class="dg-tm" x="324" y="228" text-anchor="middle">sets a max length</text>
+
+          <line class="dg-arrow" x1="424" y1="160" x2="512" y2="160" marker-end="url(#ah)"/>
+          <text class="dg-lbl" x="430" y="152">HTTPS request + key</text>
+
+          <!-- openrouter -->
+          <rect class="dg-box" x="514" y="118" width="170" height="86" rx="11"/>
+          <text class="dg-t" x="599" y="146" text-anchor="middle">OpenRouter</text>
+          <text class="dg-tm" x="599" y="167" text-anchor="middle">one address,</text>
+          <text class="dg-tm" x="599" y="182" text-anchor="middle">414 models behind it</text>
+          <text class="dg-tm" x="599" y="197" text-anchor="middle">one bill</text>
+
+          <line class="dg-arrow" x1="684" y1="160" x2="748" y2="160" marker-end="url(#ah)"/>
+          <text class="dg-lbl" x="690" y="152">routes by slug</text>
+
+          <!-- model -->
+          <rect class="dg-nplus" x="750" y="126" width="132" height="70" rx="11"/>
+          <text class="dg-ta" x="816" y="155" text-anchor="middle">the model</text>
+          <text class="dg-tm" x="816" y="176" text-anchor="middle">gpt-5.6-luna</text>
+
+          <!-- return path -->
+          <line class="dg-arrow" x1="816" y1="196" x2="816" y2="300" style="stroke:var(--accent)" marker-end="url(#aha)"/>
+          <line class="dg-arrow" x1="816" y1="300" x2="330" y2="300" style="stroke:var(--accent)" marker-end="url(#aha)"/>
+          <text class="dg-lbl" x="560" y="292">reply text + token counts come back</text>
+
+          <!-- printed -->
+          <rect class="dg-box" x="224" y="320" width="200" height="66" rx="11"/>
+          <text class="dg-t" x="324" y="348" text-anchor="middle">printed to terminal</text>
+          <text class="dg-tm" x="324" y="368" text-anchor="middle">model / reply / tokens</text>
+
+          <!-- stateless note -->
+          <rect x="470" y="330" width="412" height="56" rx="10" style="fill:none;stroke:var(--line-2);stroke-width:1.4;stroke-dasharray:6 5"/>
+          <text class="dg-tm" x="676" y="354" text-anchor="middle">Then everything is forgotten. The next run starts</text>
+          <text class="dg-tm" x="676" y="370" text-anchor="middle">from nothing — the model keeps no memory of this.</text>
+        </svg>
+      </div>
+      <figcaption>The one claim this picture makes: your script is a thin messenger between a secret file and someone else's model — and the conversation dies the moment the script ends.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 02 INVENTORY -->
+  <section id="inventory">
+    <div class="sec-head reveal"><span class="sec-num">02</span><div><h2>Concept inventory</h2><p>Every idea the project touches, and the version that introduced it. Filter by version to revise one stage at a time.</p></div></div>
+    <div class="filters reveal" id="ifilters">
+      <button class="fbtn on" data-f="all">All · 30</button>
+      <button class="fbtn" data-f="v1">V1 — first working script</button>
+      <button class="fbtn" data-f="v2">V2 — simplified</button>
+      <button class="fbtn" data-f="v3">V3 — prompt controls</button>
+      <button class="fbtn" data-f="v4">V4 — model &amp; cost</button>
+    </div>
+    <div class="tbl-wrap reveal">
+      <table id="itable">
+        <thead><tr><th>#</th><th>Concept</th><th>In one line</th><th>Kind</th><th>Version</th></tr></thead>
+        <tbody>
+          <tr data-s="v1"><td class="num-c">1</td><td>API key</td><td>A password that proves your account is making the request</td><td><span class="pill config">Secrets</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">2</td><td>Environment variable</td><td>A value that lives outside your code, in the machine's settings</td><td><span class="pill config">Secrets</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">3</td><td><code>.env</code> file</td><td>A local text file holding those values so you don't retype them</td><td><span class="pill config">Secrets</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">4</td><td>python-dotenv</td><td>The library that reads <code>.env</code> into the environment</td><td><span class="pill shim">Library</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">5</td><td><code>.gitignore</code></td><td>Tells git which files to never save or upload</td><td><span class="pill config">Secrets</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">6</td><td><code>requirements.txt</code></td><td>The written list of libraries this project needs</td><td><span class="pill shim">Tooling</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">7</td><td>pip install</td><td>The command that downloads those libraries</td><td><span class="pill shim">Tooling</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">8</td><td>SDK / client library</td><td>Pre-written code that handles the messy HTTP details for you</td><td><span class="pill shim">Library</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">9</td><td>API</td><td>An agreed way for your program to ask another program for something</td><td><span class="pill builtin">Core idea</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">10</td><td><code>base_url</code> override</td><td>Pointing an OpenAI-shaped client at a different company's address</td><td><span class="pill builtin">Core idea</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">11</td><td>Gateway / aggregator</td><td>One door in front of many AI providers, with one key and one bill</td><td><span class="pill builtin">Core idea</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">12</td><td>Model slug</td><td>The <code>vendor/model</code> name that picks who answers</td><td><span class="pill builtin">API shape</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">13</td><td>Chat completions</td><td>The specific request type: send messages, get one reply</td><td><span class="pill builtin">API shape</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">14</td><td>Messages list</td><td>The conversation, as an ordered list of role-and-text pairs</td><td><span class="pill builtin">API shape</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">15</td><td>Response object</td><td>The structured reply you dig into for text, model name, usage</td><td><span class="pill builtin">API shape</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">16</td><td>HTTP status 401</td><td>"I don't accept this key" — an auth failure, not a code bug</td><td><span class="pill capability">Debugging</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v1"><td class="num-c">17</td><td>Text encoding &amp; the BOM</td><td>Invisible first bytes that can silently break a config file</td><td><span class="pill capability">Debugging</span></td><td><span class="pill layer">V1</span></td></tr>
+          <tr data-s="v2"><td class="num-c">18</td><td>Tracebacks</td><td>The error report Python prints; read the last line first</td><td><span class="pill capability">Debugging</span></td><td><span class="pill layer">V2</span></td></tr>
+          <tr data-s="v2"><td class="num-c">19</td><td>Letting errors raise</td><td>Choosing not to hide failures while you're still learning</td><td><span class="pill capability">Style</span></td><td><span class="pill layer">V2</span></td></tr>
+          <tr data-s="v2"><td class="num-c">20</td><td><code>KeyError</code></td><td>What Python says when a name you asked for isn't there</td><td><span class="pill capability">Debugging</span></td><td><span class="pill layer">V2</span></td></tr>
+          <tr data-s="v2"><td class="num-c">21</td><td>Top-to-bottom script</td><td>No functions or classes — the file reads in execution order</td><td><span class="pill capability">Style</span></td><td><span class="pill layer">V2</span></td></tr>
+          <tr data-s="v3"><td class="num-c">22</td><td>Triple-quoted string</td><td>Quotes that let text run over several lines</td><td><span class="pill shim">Python</span></td><td><span class="pill layer">V3</span></td></tr>
+          <tr data-s="v3"><td class="num-c">23</td><td><code>.strip()</code></td><td>Removes the blank space and newlines around your text</td><td><span class="pill shim">Python</span></td><td><span class="pill layer">V3</span></td></tr>
+          <tr data-s="v3"><td class="num-c">24</td><td>System vs user role</td><td>Standing instructions versus the actual question</td><td><span class="pill builtin">Prompting</span></td><td><span class="pill layer">V3</span></td></tr>
+          <tr data-s="v3"><td class="num-c">25</td><td><code>sys.argv</code></td><td>Words you type after the filename, handed to your script</td><td><span class="pill shim">Python</span></td><td><span class="pill layer">V3</span></td></tr>
+          <tr data-s="v3"><td class="num-c">26</td><td>Precedence</td><td>Deciding which input wins when two are supplied</td><td><span class="pill capability">Style</span></td><td><span class="pill layer">V3</span></td></tr>
+          <tr data-s="v4"><td class="num-c">27</td><td>Tokens</td><td>Word-fragments — the unit models read, write and charge in</td><td><span class="pill builtin">Cost</span></td><td><span class="pill layer">V4</span></td></tr>
+          <tr data-s="v4"><td class="num-c">28</td><td>Price per million</td><td>Separate rates for text you send and text you get back</td><td><span class="pill builtin">Cost</span></td><td><span class="pill layer">V4</span></td></tr>
+          <tr data-s="v4"><td class="num-c">29</td><td>Context window</td><td>The most tokens a model can hold in mind at once</td><td><span class="pill builtin">Cost</span></td><td><span class="pill layer">V4</span></td></tr>
+          <tr data-s="v4"><td class="num-c">30</td><td><code>max_tokens</code></td><td>A hard cap on reply length, so a run can't get expensive</td><td><span class="pill builtin">Cost</span></td><td><span class="pill layer">V4</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 03 V1 -->
+  <section id="v1">
+    <div class="sec-head reveal"><span class="sec-num">03</span><div><h2>Version 1 — get one real answer back</h2><p>The goal of a first version is never elegance. It is proof that the pipe works end to end.</p></div></div>
+
+    <h3>Why a secret can't live in the code</h3>
+    <div class="prose reveal">
+      <p>An API key is a password that spends real money. If it sits inside <code>main.py</code>, then the key travels wherever the file travels — into git history, into a screenshot, into a shared folder. Git history is the dangerous one: deleting the line later doesn't remove it, because git remembers every past version.</p>
+      <p>So we split the project in two: <b>code that is safe to share</b>, and <b>secrets that never leave your machine</b>. The code refers to the secret <i>by name</i> and looks it up at run time.</p>
+    </div>
+    <div class="callout key reveal" style="margin:18px 0"><span class="mk">Principle</span><p>Code says <i>"give me the value called OPENROUTER_API_KEY"</i>. It never says <i>what that value is</i>. Anyone can read your code; only your machine knows the answer.</p></div>
+
+    <h3>What python-dotenv is actually for</h3>
+    <div class="prose reveal">
+      <p>An <b>environment variable</b> is a named value the operating system holds for running programs. It's the standard place for secrets, because it belongs to the machine rather than the project. The catch: setting one by hand in the terminal only lasts for that terminal session, so you'd retype it constantly.</p>
+      <p><b>python-dotenv</b> closes that gap. It reads a plain text file named <code>.env</code> and loads each line into the environment when the script starts. You write your key once, in a file git is told to ignore, and every future run picks it up automatically.</p>
+      <p><b>What this buys us:</b> the convenience of hardcoding, with none of the exposure. And when this project eventually runs somewhere else — a server, a scheduled job — that environment supplies the variable its own way and the code doesn't change at all. That portability is the real payoff.</p>
+    </div>
+
+    <h3>The trick that makes this work with OpenRouter</h3>
+    <div class="prose reveal">
+      <p>We install the <b>openai</b> library but we are not talking to OpenAI. This surprises people, and it's worth understanding because it's a genuinely important industry pattern.</p>
+      <p>OpenAI published the shape of their API — which address to POST to, what JSON to send, what comes back. That shape became a de-facto standard, and other services deliberately copy it. OpenRouter is one of them. So the OpenAI client library works against OpenRouter with a single change: we hand it a different <code>base_url</code>.</p>
+      <p><b>Why it matters to us:</b> one library and one mental model gets us access to hundreds of models from many vendors. And if we ever switch gateways, the change is one line, not a rewrite.</p>
+    </div>
+
+    <h3>Why a gateway instead of going direct</h3>
+    <div class="grid cols-2 reveal" style="margin-top:6px">
+      <div class="card"><h3 style="margin-top:0">Going direct to each vendor</h3><p style="margin:0;color:var(--ink-2);font-size:.94rem">A separate account, key, bill and client library for every company. Comparing two models means writing two integrations.</p></div>
+      <div class="card"><h3 style="margin-top:0">Going through OpenRouter</h3><p style="margin:0;color:var(--ink-2);font-size:.94rem">One account, one key, one bill, one library. Swapping model — even across vendors — is editing a single string. That is exactly what we did in V4.</p></div>
+    </div>
+    <div class="prose reveal" style="margin-top:15px">
+      <p>For someone learning, the ability to try a model without a new signup is worth a great deal. We confirmed 414 models available through the one key.</p>
+    </div>
+
+    <h3>The request shape: roles, not just text</h3>
+    <div class="prose reveal">
+      <p>You might expect to send a single string. Instead you send a <b>list of messages</b>, and each message carries a <b>role</b>. This is the one piece of structure worth memorising, because everything about prompting builds on it.</p>
+    </div>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">the shape of every request — worth knowing by heart</span></div>
+      <pre><span class="c"># a list, in order, of who said what</span>
+[
+  { <span class="k">"role"</span>: <span class="s">"system"</span>, <span class="k">"content"</span>: <span class="s">"standing instructions"</span> },
+  { <span class="k">"role"</span>: <span class="s">"user"</span>,   <span class="k">"content"</span>: <span class="s">"the actual question"</span> }
+]</pre>
+    </div>
+    <div class="prose reveal">
+      <p>There are three roles you'll meet. <b>system</b> sets behaviour and identity. <b>user</b> is you. <b>assistant</b> is what the model previously said — you only include it when you want the model to remember earlier turns, which is the whole basis of multi-turn chat.</p>
+      <p><b>Why a list and not a string:</b> because the model has no memory. Every request must carry the entire conversation you want considered. The list <i>is</i> the memory, and you own it.</p>
+    </div>
+
+    <h3>What V1 also had, and later lost</h3>
+    <div class="prose reveal">
+      <p>The first version wrapped everything in error handling — five separate branches catching bad keys, missing models, rate limits and network failures — and organised the code into functions with a command-line flag parser. All of that is normal in production code, and all of it was removed in V2. The reasoning is in the next section, and it's a genuine lesson rather than a reversal.</p>
+    </div>
+  </section>
+
+  <!-- 04 V2 -->
+  <section id="v2">
+    <div class="sec-head reveal"><span class="sec-num">04</span><div><h2>Version 2 — take the scaffolding away</h2><p>Roughly 110 lines became 27. Nothing about what the script achieves changed.</p></div></div>
+
+    <div class="grid cols-3 reveal" style="margin-bottom:20px">
+      <div class="card stat"><div class="n">110→27</div><div class="k">lines, for identical behaviour</div></div>
+      <div class="card stat"><div class="n">5→0</div><div class="k">error-handling branches</div></div>
+      <div class="card stat"><div class="n">5→0</div><div class="k">function definitions</div></div>
+    </div>
+
+    <h3>Why removing error handling helps a learner</h3>
+    <div class="prose reveal">
+      <p>Error handling replaces an ugly, detailed failure with a tidy, vague one. That is a good trade for a user of finished software, and a bad trade for someone learning — because the ugly detail <i>is the lesson</i>.</p>
+      <p>Compare the two. With handling, a bad key printed <i>"OpenRouter rejected the API key."</i> Clean, but it teaches nothing. Without handling, Python prints a traceback ending in <code>openai.AuthenticationError: Error code: 401</code>. Now you've met a real exception type and a real HTTP status code, and you can search for either.</p>
+      <p><b>What we achieve by removing it:</b> the code becomes the logic and nothing else. Every remaining line does visible work.</p>
+    </div>
+    <div class="callout warn reveal" style="margin:18px 0"><span class="mk">Balance</span><p>This is a learning choice, not a universal rule. Software other people depend on needs error handling — a scheduled job shouldn't die on one network blip. The skill is knowing which situation you're in. Add handling when a failure needs a <i>response</i>, not merely a <i>report</i>.</p></div>
+
+    <h3>How to read a traceback</h3>
+    <div class="prose reveal">
+      <p>A traceback looks intimidating because it's printed in the wrong order for humans. It starts at the outermost call and works inward. <b>Read the last line first</b> — that's the actual error and it usually names the problem exactly, as in <code>KeyError: 'OPENROUTER_API_KEY'</code>. Then look upward for the line number in <i>your</i> file, ignoring the frames inside libraries.</p>
+    </div>
+
+    <h3>Plain if/else over clever one-liners</h3>
+    <div class="prose reveal">
+      <p>Python lets you choose a value in one line, and V1 did. V2 spends four lines on the same decision using ordinary <code>if</code> and <code>else</code>. It's longer and better here: the four-line version reads in the order it happens, and there's no new syntax between you and the idea. Compact forms are worth learning later, once the underlying decision is obvious to you.</p>
+    </div>
+  </section>
+
+  <!-- 05 V3 -->
+  <section id="v3">
+    <div class="sec-head reveal"><span class="sec-num">05</span><div><h2>Version 3 — make it easy to ask anything</h2><p>Turning a fixed connection test into a tool you can actually put questions to.</p></div></div>
+
+    <h3>A marked place to type</h3>
+    <div class="prose reveal">
+      <p>V2 had its question buried in the middle of the file, tangled up with the sending logic. If you're going to edit something daily, it should be at the top, clearly labelled, and separated from machinery you shouldn't touch. That's the entire reasoning behind the <code>PROMPT</code> block — it isn't a programming technique, it's respect for the person editing the file.</p>
+      <p>It uses <b>triple quotes</b> so your question can span several lines, and <code>.strip()</code> when sending so the surrounding blank lines you naturally leave don't get transmitted as part of the question.</p>
+    </div>
+
+    <h3>Two ways in, and which wins</h3>
+    <div class="prose reveal">
+      <p>You can edit <code>PROMPT</code>, or pass a question on the command line. The command line wins when both exist. That ordering is deliberate: the file holds the thing you ask <i>often</i>, and the command line handles the one-off you don't want to save. Deciding which input takes priority is called <b>precedence</b>, and any tool with more than one input source has to answer it.</p>
+    </div>
+
+    <h3>The system prompt, and why it's separate</h3>
+    <div class="prose reveal">
+      <p><code>SYSTEM_PROMPT</code> is for instructions that should apply to <i>every</i> question — a persona, a format, a language, a standing constraint. It's kept apart from the question because it has a different lifetime: your question changes constantly, your standing instructions rarely.</p>
+      <p>We verified it works by setting it to <i>"answer only in French"</i> and asking an English question — the reply came back in French. That is the fastest way to convince yourself a system prompt is really reaching the model.</p>
+      <p><b>What it achieves for this project:</b> when this becomes a data-intelligence tool, the system prompt is where "you are a games analytics assistant, answer with metrics and be concise" will live — written once, applied to every query.</p>
+    </div>
+  </section>
+
+  <!-- 06 V4 -->
+  <section id="v4">
+    <div class="sec-head reveal"><span class="sec-num">06</span><div><h2>Version 4 — choosing a model, and paying for it</h2><p>The version where the concepts stop being about Python and start being about economics.</p></div></div>
+
+    <h3>Tokens — the unit of everything</h3>
+    <div class="prose reveal">
+      <p>Models don't read letters or words. They read <b>tokens</b>: chunks of text, roughly ¾ of a word each on average, so 100 tokens is about 75 English words. Common words are usually one token; unusual words, names and code split into several.</p>
+      <p>Tokens matter because they are simultaneously the unit of <b>cost</b>, the unit of <b>limits</b>, and the unit of <b>speed</b>. Understand tokens and pricing, context windows and truncation all become obvious at once.</p>
+      <p>Input and output are counted and priced separately, and output is usually far more expensive — output for our model costs six times its input. Our real measurement: an analytics question used 27 input and 70 output tokens.</p>
+    </div>
+
+    <h3>Reading a price, and what our swap actually did</h3>
+    <div class="prose reveal">
+      <p>Prices are quoted per million tokens, which is why they look reassuringly small. Here is the comparison that decided V4, with live figures pulled from OpenRouter:</p>
+    </div>
+    <div class="tbl-wrap reveal" style="margin-top:6px">
+      <table>
+        <thead><tr><th>Model</th><th>Input $/M</th><th>Output $/M</th><th>Context window</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">openai/gpt-4o-mini</td><td class="num-c">0.15</td><td class="num-c">0.60</td><td class="num-c">128,000</td><td><span class="pill config">replaced</span></td></tr>
+          <tr><td class="mono">openai/gpt-5.6-luna</td><td class="num-c">0.10</td><td class="num-c">0.60</td><td class="num-c">1,050,000</td><td><span class="pill builtin">in use</span></td></tr>
+          <tr><td class="mono">openai/gpt-5.6-terra</td><td class="num-c">1.00</td><td class="num-c">6.00</td><td class="num-c">1,050,000</td><td><span class="pill layer">bigger sibling</span></td></tr>
+          <tr><td class="mono">openai/gpt-5.6-sol</td><td class="num-c">5.00</td><td class="num-c">30.00</td><td class="num-c">1,050,000</td><td><span class="pill layer">largest sibling</span></td></tr>
+          <tr><td class="mono">qwen/qwen3.7-flash</td><td class="num-c">0.03</td><td class="num-c">0.13</td><td class="num-c">1,000,000</td><td><span class="pill capability">cheaper option</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose reveal" style="margin-top:15px">
+      <p>The useful lesson: <b>newer is not automatically dearer</b>. The model we moved to is a generation ahead, costs less per input token than the one it replaced, and holds eight times as much text. Checking current prices beat assuming.</p>
+      <p>The same table shows the other half of the lesson. One family can span a 50× price range — the biggest sibling costs fifty times the smallest on input. "Which model" is a cost decision as much as a quality one, and for learning, the cheap end is almost always right.</p>
+    </div>
+
+    <h3>Context window — the size of the desk</h3>
+    <div class="prose reveal">
+      <p>The <b>context window</b> is the maximum tokens a model can consider at once: your system prompt, your question, the conversation history you chose to include, and the reply it's composing, all together. Exceed it and the request is rejected or the oldest material gets dropped.</p>
+      <p>Ours is 1,050,000 tokens — several long books' worth. That's far more than a single question needs, but it becomes the thing that matters the moment you start attaching data or keeping conversation history.</p>
+    </div>
+
+    <h3>max_tokens — a spending limit you set</h3>
+    <div class="prose reveal">
+      <p><code>max_tokens</code> caps how long the reply may be. It is not a suggestion to the model about style; it's a hard ceiling where generation stops, mid-sentence if necessary. We set 500.</p>
+      <p><b>Why bother, given how cheap this is:</b> because it's a safety rail with no downside at our scale. A prompt that accidentally invites an enormous answer can't quietly run up a bill or a long wait. If a reply ever gets cut off mid-sentence, that's the cap doing its job and telling you to raise it.</p>
+    </div>
+
+    <h3>Watching the meter</h3>
+    <div class="prose reveal">
+      <p>Every response includes a <b>usage</b> report, and we print it. Making cost visible on every single run is how a sense of scale gets built — after a few dozen runs you'll know roughly what a question costs without calculating. For the record: that 27-in / 70-out analytics question cost about $0.000045, or roughly 22,000 questions per dollar.</p>
+    </div>
+    <div class="callout reveal" style="margin-top:16px"><span class="mk" style="background:var(--surface-3);color:var(--muted)">AVOID</span><p>OpenRouter also offers "always latest" aliases that auto-follow a vendor's newest release. Tempting, but we deliberately didn't use one: it currently resolves to the $5.00 / $30.00 tier — fifty times our input cost — and its price and behaviour can change without you editing a thing. Pin an explicit model; upgrade when <i>you</i> decide.</p></div>
+  </section>
+
+  <!-- 07 DEEP -->
+  <section id="deep">
+    <div class="sec-head reveal"><span class="sec-num">07</span><div><h2>The three ideas worth re-reading</h2><p>If you forget everything else here, these are the ones that keep paying off.</p></div></div>
+
+    <div class="grid cols-2 reveal">
+      <div class="card">
+        <h3 style="margin-top:0">1 · The model has no memory</h3>
+        <p style="margin:0 0 10px;color:var(--ink-2);font-size:.94rem">Each request is judged entirely on what you send in it. The model isn't holding your previous question somewhere; there is no session. Chat products <i>feel</i> continuous because they resend the whole prior conversation every single turn.</p>
+        <p style="margin:0;color:var(--muted);font-size:.9rem">Consequences worth remembering: conversation history is your job, longer conversations cost more (you're resending everything), and this is why the request takes a <i>list</i> of messages.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">2 · Copied API shapes are leverage</h3>
+        <p style="margin:0 0 10px;color:var(--ink-2);font-size:.94rem">One popular API shape being copied by competitors means one library, one mental model, and hundreds of interchangeable models. Our whole vendor switch was a <code>base_url</code> and a model string.</p>
+        <p style="margin:0;color:var(--muted);font-size:.9rem">Look for this pattern elsewhere — S3-compatible storage and Postgres-compatible databases work the same way, and recognising it saves you learning the same thing twice.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">3 · Secrets are a boundary, not a habit</h3>
+        <p style="margin:0 0 10px;color:var(--ink-2);font-size:.94rem">Three small files enforce one rule between them: <code>.env</code> holds the secret, <code>.gitignore</code> stops it being committed, <code>.env.example</code> documents what's needed without revealing it.</p>
+        <p style="margin:0;color:var(--muted);font-size:.9rem">The example file is the underrated one — it's how the next person (or future you) knows which variables to set without anyone having to share a live key.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Bonus · Verify, don't assume</h3>
+        <p style="margin:0 0 10px;color:var(--ink-2);font-size:.94rem">Model names and prices change constantly. Every figure in this document came from asking OpenRouter's live model list, not from memory — and doing that caught a default model that would have been wrong.</p>
+        <p style="margin:0;color:var(--muted);font-size:.9rem">Any list of available models is a fact about today. Re-check it rather than trusting a document, this one included.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 GOTCHAS -->
+  <section id="gotchas">
+    <div class="sec-head reveal"><span class="sec-num">08</span><div><h2>Gotchas we actually hit</h2><p>Real failures from building this, kept because the surprising ones teach best.</p></div></div>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Symptom</th><th>Real cause</th><th>Lesson</th></tr></thead>
+        <tbody>
+          <tr><td>Script said the key wasn't set — but <code>.env</code> existed and looked correct</td><td>The file was saved with a UTF-8 <b>BOM</b>: three invisible bytes at the start. They got glued onto the first name, so the key was stored under a name nothing was looking for.</td><td>"Looks right" isn't proof. Text files carry invisible bytes, and Windows editors add them by default. Reading as <code>utf-8-sig</code> ignores them.</td></tr>
+          <tr><td>Model list loaded fine with a deliberately fake key</td><td>The model-list endpoint is public and needs no authentication. Only the chat request actually checks your key.</td><td>A passing call doesn't prove your credentials work — it only proves the call it made works. Test the thing you actually care about.</td></tr>
+          <tr><td>Installed library was version 3.1, not the 1.x expected</td><td><code>requirements.txt</code> said "1.0 or newer", and the library had since had two major releases.</td><td>"Or newer" invites future surprises. Major versions can break things, so verify what actually installed before trusting example code.</td></tr>
+          <tr><td>A wrong model name couldn't be tested with a fake key</td><td>Authentication is checked before the model name, so a bad key always errors first and masks the model error.</td><td>Errors have an order. When two things are wrong, you only see the first — fix it and look again.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 09 NEXT -->
+  <section id="next">
+    <div class="sec-head reveal"><span class="sec-num">09</span><div><h2>Where this goes next</h2><p>Each step adds exactly one concept. In this order, nothing arrives before its foundation.</p></div></div>
+    <div class="timeline">
+      <div class="phase reveal"><div class="node">5</div><div class="body">
+        <h3>Remember the conversation</h3>
+        <p class="goal">New concept: managing state yourself, in a loop.</p>
+        <ul>
+          <li>Keep the messages list alive between questions instead of rebuilding it.</li>
+          <li>Append each reply back as an <code>assistant</code> message — this is the payoff of understanding roles.</li>
+          <li>Watch input tokens climb every turn, and feel why long chats cost more.</li>
+        </ul>
+        <div class="exit"><b>You'll know it works</b><span>Ask "what did I just ask you?" and get the right answer.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">6</div><div class="body">
+        <h3>Stream the answer as it's written</h3>
+        <p class="goal">New concept: processing a reply in pieces instead of waiting for all of it.</p>
+        <ul>
+          <li>Text appears word by word, the way chat apps behave.</li>
+          <li>Introduces looping over a response rather than reading one finished object.</li>
+        </ul>
+        <div class="exit"><b>You'll know it works</b><span>Words appear progressively rather than after a pause.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">7</div><div class="body">
+        <h3>Feed it your own data</h3>
+        <p class="goal">New concept: putting real context into the prompt — the beginning of actual intel work.</p>
+        <ul>
+          <li>Read a local CSV or text file and include it with your question.</li>
+          <li>Makes the context window concrete: a big file genuinely won't fit.</li>
+          <li>Ask questions about <i>your</i> data instead of general knowledge.</li>
+        </ul>
+        <div class="exit"><b>You'll know it works</b><span>It answers a question that can only be answered from your file.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">8</div><div class="body">
+        <h3>Ask for structured answers</h3>
+        <p class="goal">New concept: replies as data your code can use, not prose for a human.</p>
+        <ul>
+          <li>Request JSON so another program can consume the output.</li>
+          <li>The step that turns a chat script into a pipeline component.</li>
+        </ul>
+        <div class="exit"><b>You'll know it works</b><span>The reply parses cleanly without any string fiddling.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">9</div><div class="body">
+        <h3>Put the error handling back — on purpose</h3>
+        <p class="goal">New concept: handling failures where a real response is needed, now that you've seen the raw errors.</p>
+        <ul>
+          <li>Retry on a rate limit; report clearly on a bad key.</li>
+          <li>Meaningful now precisely because you've met each error unwrapped.</li>
+        </ul>
+        <div class="exit"><b>You'll know it works</b><span>An unattended run survives a temporary network failure.</span></div>
+      </div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap fx">
+    <span class="np">Learning notes · <b style="color:var(--ink)">geo-play-ai-intel</b> — concepts behind main.py, V1 → V4</span>
+    <span class="np">Prices &amp; model list verified live against OpenRouter · 2026-08-17</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, KEY="orlearn-theme";
+  function systemDark(){return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;}
+  function apply(t){ if(t==="light"||t==="dark"){root.setAttribute("data-theme",t);} else {root.removeAttribute("data-theme");} }
+  var stored=null; try{stored=localStorage.getItem(KEY);}catch(e){}
+  if(stored) apply(stored);
+  var btn=document.getElementById("theme");
+  if(btn){ btn.addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(systemDark()?"dark":"light");
+    var next=cur==="dark"?"light":"dark";
+    apply(next); try{localStorage.setItem(KEY,next);}catch(e){}
+  });}
+
+  var prog=document.getElementById("progress");
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    var p=max>0?(h.scrollTop/max)*100:0;
+    if(prog) prog.style.width=p+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revs=[].slice.call(document.querySelectorAll(".reveal"));
+  if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else{
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target);} });
+    },{rootMargin:"0px 0px -8% 0px",threshold:.08});
+    revs.forEach(function(e){io.observe(e);});
+  }
+
+  var links=[].slice.call(document.querySelectorAll("#toc a"));
+  var map={}; links.forEach(function(a){ var id=a.getAttribute("href").slice(1); map[id]=a; });
+  var secs=[].slice.call(document.querySelectorAll("main section[id]"));
+  if("IntersectionObserver" in window){
+    var so=new IntersectionObserver(function(en){
+      en.forEach(function(x){
+        if(x.isIntersecting){
+          links.forEach(function(l){l.classList.remove("active");});
+          var a=map[x.target.id]; if(a)a.classList.add("active");
+        }
+      });
+    },{rootMargin:"-45% 0px -50% 0px",threshold:0});
+    secs.forEach(function(s){so.observe(s);});
+  }
+
+  var fbtns=[].slice.call(document.querySelectorAll("#ifilters .fbtn"));
+  var rows=[].slice.call(document.querySelectorAll("#itable tbody tr"));
+  fbtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      fbtns.forEach(function(x){x.classList.remove("on");}); b.classList.add("on");
+      var f=b.getAttribute("data-f");
+      rows.forEach(function(r){
+        var show = f==="all" || r.getAttribute("data-s")===f;
+        r.classList.toggle("hide",!show);
+      });
+    });
+  });
+})();
+</script>

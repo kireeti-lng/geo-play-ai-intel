@@ -1,0 +1,250 @@
+{
+  "total_metrics": 49,
+  "metrics": [
+    {
+      "metric_id": "ad_arpdau",
+      "metric_name": "Ad ARPDAU",
+      "definition": "Ad ARPDAU is the quotient of gross advertising revenue recognized on a given day and the count of daily active users on that same day, expressed in currency units per user per day. Because the denominator comprises the entire active base rather than only ad-exposed users, the measure jointly reflects per-impression yield and the penetration of advertising across that base. It is therefore not recoverable from eCPM alone without also specifying impressions per DAU."
+    },
+    {
+      "metric_id": "ad_arpu",
+      "metric_name": "Ad ARPU",
+      "definition": "Ad ARPU is gross advertising revenue accrued over a stated reporting period divided by the count of unique active users observed in that same period, most commonly a calendar month measured against monthly active users. It differs from Ad ARPDAU in the construction of the denominator, deduplicating users across the entire window rather than normalizing per day, and the two therefore diverge systematically as window length increases."
+    },
+    {
+      "metric_id": "ad_ecpm_usd",
+      "metric_name": "Ad eCPM (USD)",
+      "definition": "Ad eCPM (USD) denotes effective cost per mille: gross advertising revenue divided by the number of ad impressions served, multiplied by one thousand, and denominated in United States dollars. It normalizes revenue against delivered inventory and is thus the canonical measure of per-impression yield, invariant to session volume or the size of the active user base. Comparison across placements or geographies is valid only when impression-counting conventions and currency conversion dates are held constant."
+    },
+    {
+      "metric_id": "ad_engagement_rate",
+      "metric_name": "Ad Engagement Rate",
+      "definition": "Ad Engagement Rate is the proportion of ad impressions that elicit a qualifying user interaction, such as a click, a rewarded-video completion, or a playable interaction, divided by total impressions served over the same interval. The measure is format-sensitive, since rewarded and interstitial placements carry structurally different interaction propensities; aggregation across formats consequently requires explicit weighting to remain interpretable."
+    },
+    {
+      "metric_id": "ad_impressions",
+      "metric_name": "Ad Impressions",
+      "definition": "Ad Impressions is the count of advertising creatives rendered and confirmed as viewable to players over a specified interval, attributed at the moment the mediation layer or network signals a successful display. As an unnormalized volume measure it scales with both audience size and ad load, and should therefore be interpreted alongside Impressions per DAU rather than in isolation."
+    },
+    {
+      "metric_id": "ad_revenue_usd",
+      "metric_name": "Ad Revenue (USD)",
+      "definition": "Ad Revenue (USD) is the gross monetary value earned from advertising inventory over a stated interval, denominated in United States dollars following conversion from network-reported currencies. Because networks report first on an estimated and later on a reconciled basis, the measure is subject to retroactive restatement, and any reported figure should carry the reconciliation status of its source."
+    },
+    {
+      "metric_id": "ad_users",
+      "metric_name": "Ad Users",
+      "definition": "Ad Users is the count of distinct players who received at least one ad impression within a specified interval. It is a proper subset of the active user population for that interval, and the ratio of the two quantifies advertising reach. Distinguishing it from Daily Active Users is essential because it forms the denominator of Impressions per Ad User."
+    },
+    {
+      "metric_id": "anr_rate",
+      "metric_name": "ANR Rate",
+      "definition": "ANR Rate is the incidence of Application Not Responding events, in which the main thread remains unresponsive beyond the platform-defined latency threshold, normalized against a stated exposure base of sessions or user-days. Unlike Crash Rate, which counts involuntary process termination, ANR Rate captures liveness failures in which the process survives; the two are disjoint event classes and must not be summed into a single stability figure."
+    },
+    {
+      "metric_id": "arpdau",
+      "metric_name": "ARPDAU",
+      "definition": "ARPDAU is total revenue recognized on a given day, aggregating in-app purchase and advertising streams, divided by the count of daily active users on that day. It is the standard daily monetization yardstick in free-to-play analytics because it holds audience size constant and thereby isolates monetization intensity from growth. Multi-day figures are conventionally computed as the arithmetic mean of daily values rather than as period revenue over period unique users."
+    },
+    {
+      "metric_id": "arppu",
+      "metric_name": "ARPPU",
+      "definition": "ARPPU is total in-app purchase revenue over a stated interval divided by the count of distinct paying users in that same interval. Because the denominator is restricted to payers, it measures spend depth within the monetizing population and is invariant to changes in conversion; the identity that ARPU equals ARPPU multiplied by the payer conversion rate makes this decomposition explicit."
+    },
+    {
+      "metric_id": "arpu",
+      "metric_name": "ARPU",
+      "definition": "ARPU is total revenue over a stated reporting period divided by the count of unique active users in that period, irrespective of whether a given user transacted. It differs from ARPPU in that non-payers remain in the denominator, so ARPU responds jointly to spend depth and payer conversion, whereas ARPPU responds to the former alone."
+    },
+    {
+      "metric_id": "avg_fps",
+      "metric_name": "Avg FPS",
+      "definition": "Avg FPS is the mean rendered-frames-per-second observed across gameplay sessions over a stated interval, computed as total rendered frames divided by total elapsed rendering time. Because arithmetic means conceal the tail behaviour that players perceive as stutter, the measure should be reported with percentile companions such as the fifth percentile or the proportion of rendering time spent below target frame rate."
+    },
+    {
+      "metric_id": "avg_session_length",
+      "metric_name": "Avg Session Length",
+      "definition": "Avg Session Length is aggregate playtime over a stated interval divided by the number of sessions in that interval, yielding mean session duration. Its value depends materially on the session-termination convention adopted, typically a fixed inactivity timeout, so comparison across titles or instrumentation versions is invalid unless that timeout is identical."
+    },
+    {
+      "metric_id": "avg_transaction_value",
+      "metric_name": "Avg Transaction Value",
+      "definition": "Avg Transaction Value is in-app purchase revenue over a stated interval divided by the number of completed transactions in that interval, representing mean basket size per purchase event. It is distinct from ARPPU, which divides by paying users rather than by transactions; the quotient of ARPPU and Avg Transaction Value recovers transactions per paying user."
+    },
+    {
+      "metric_id": "conversion",
+      "metric_name": "Conversion",
+      "definition": "Conversion is the general-form proportion of users who complete a designated target action, divided by the count of users who entered the qualifying state for that action within a stated observation window. As an abstract construct it is uninterpretable without explicit declaration of numerator event, denominator population, and attribution window. It subsumes, but is not synonymous with, the payer-specific IAP Conversion."
+    },
+    {
+      "metric_id": "crash_rate",
+      "metric_name": "Crash Rate",
+      "definition": "Crash Rate is the incidence of involuntary application process terminations normalized against a stated exposure base, conventionally sessions or user-days, over a specified interval. It is the primary stability indicator in client telemetry and is reported separately from ANR Rate because the two describe mutually exclusive failure modes. Interpretation requires the exposure base to be declared, since per-session and per-user-day rates differ by the sessions-per-user factor."
+    },
+    {
+      "metric_id": "d1_retention",
+      "metric_name": "D1 Retention",
+      "definition": "D1 Retention is the proportion of an install cohort that initiates at least one session on the calendar day immediately following the day of installation, with day boundaries evaluated in a declared reference timezone. The denominator is fixed at cohort size on the acquisition day, which renders the measure a survival probability rather than a period-over-period ratio and makes cohorts comparable only under identical timezone and install-attribution conventions."
+    },
+    {
+      "metric_id": "d3_retention",
+      "metric_name": "D3 Retention",
+      "definition": "D3 Retention is the proportion of an install cohort observed to be active on the third day following installation, measured against the same fixed acquisition-day denominator used throughout the day-N family. Because it is a point-in-time return probability rather than a cumulative one, it is not bounded below by D7 Retention through any arithmetic necessity, although monotonic decay is the empirical norm."
+    },
+    {
+      "metric_id": "d7_retention",
+      "metric_name": "D7 Retention",
+      "definition": "D7 Retention is the proportion of an install cohort active on the seventh day after installation, and it functions as the conventional early indicator of habit formation in free-to-play titles. It shares the fixed cohort denominator of the day-N family, so its difference from D1 Retention isolates attrition occurring between the second and seventh days."
+    },
+    {
+      "metric_id": "d14_retention",
+      "metric_name": "D14 Retention",
+      "definition": "D14 Retention is the proportion of an install cohort active on the fourteenth day after installation, situated between the early-habit and long-horizon segments of the retention curve. Because absolute values at this horizon are typically an order of magnitude below D1 Retention, statistically reliable estimation requires substantially larger cohorts to attain equivalent confidence intervals."
+    },
+    {
+      "metric_id": "d30_retention",
+      "metric_name": "D30 Retention",
+      "definition": "D30 Retention is the proportion of an install cohort active on the thirtieth day after installation, serving as the standard proxy for long-run engagement durability and the empirical anchor for lifetime value extrapolation. Its computation requires a fully matured thirty-day observation window, so cohorts acquired within the preceding thirty days are structurally incomplete and must be excluded rather than reported as low."
+    },
+    {
+      "metric_id": "daily_active_users",
+      "metric_name": "Daily Active Users",
+      "definition": "Daily Active Users is the count of distinct users who initiate at least one qualifying session within a single calendar day, evaluated in a declared reference timezone. It is a deduplicated count and is therefore not additive across days, since summing daily values overstates audience by counting returning users repeatedly. It serves as the denominator of ARPDAU, Sessions per DAU, and Impressions per DAU."
+    },
+    {
+      "metric_id": "daily_new_users",
+      "metric_name": "Daily New Users",
+      "definition": "Daily New Users is the count of distinct users observed for the first time on a given calendar day, constituting the acquisition cohort for that day. It is a proper subset of Daily Active Users and is distinguished from New Installs in that it counts first-observed users rather than installation events, so device reinstallation and multi-device usage cause the two series to diverge."
+    },
+    {
+      "metric_id": "feature_adoption_rate",
+      "metric_name": "Feature Adoption Rate",
+      "definition": "Feature Adoption Rate is the proportion of eligible active users who engage with a specified feature at least once within a stated observation window, divided by the count of users for whom that feature was available and unlocked. Restricting the denominator to eligible users is essential, since gating by progression level, platform, or experiment arm otherwise depresses the measure for reasons unrelated to the appeal of the feature."
+    },
+    {
+      "metric_id": "ftue_drop_off",
+      "metric_name": "FTUE Drop-off",
+      "definition": "FTUE Drop-off is the proportion of users entering the first-time user experience who exit before reaching a designated terminal step, computed step-wise as one minus the step-to-step continuation rate. It is the exact complement of Tutorial Completion Rate only when both are defined over an identical step set and window; because the FTUE typically spans onboarding beyond the tutorial proper, the two measures are related but not arithmetically reciprocal."
+    },
+    {
+      "metric_id": "iap_arpdau",
+      "metric_name": "IAP ARPDAU",
+      "definition": "IAP ARPDAU is in-app purchase revenue recognized on a given day divided by that day's count of daily active users, isolating the transactional component of daily monetization. Together with Ad ARPDAU it partitions ARPDAU additively, provided both terms are computed on the identical daily active denominator and revenue recognition basis."
+    },
+    {
+      "metric_id": "iap_arpu",
+      "metric_name": "IAP ARPU",
+      "definition": "IAP ARPU is in-app purchase revenue over a stated reporting period divided by the count of unique active users in that period. It differs from IAP ARPDAU in the treatment of the denominator, deduplicating users across the full window rather than normalizing per day, and the two consequently diverge systematically as the window lengthens."
+    },
+    {
+      "metric_id": "iap_conversion",
+      "metric_name": "IAP Conversion",
+      "definition": "IAP Conversion is the proportion of active users in a stated interval who complete at least one in-app purchase during that interval, divided by the count of active users in the same interval. It constitutes the payer-penetration term in the decomposition of ARPU into conversion multiplied by ARPPU, and is distinct from Purchase Funnel Conversion, which measures progression between individual steps of the checkout flow."
+    },
+    {
+      "metric_id": "iap_revenue_usd",
+      "metric_name": "IAP Revenue (USD)",
+      "definition": "IAP Revenue (USD) is the monetary value of completed in-app purchases over a stated interval, denominated in United States dollars. Reported figures must declare whether they are gross of platform commission and refunds or net of them, since the two bases differ by approximately thirty percent on major storefronts and are frequently conflated in practice."
+    },
+    {
+      "metric_id": "impressions_per_ad_user",
+      "metric_name": "Impressions per Ad User",
+      "definition": "Impressions per Ad User is total ad impressions served over a stated interval divided by the count of distinct users who received at least one impression in that interval. By excluding non-exposed users from the denominator it measures ad load within the exposed population only, and it consequently exceeds Impressions per DAU by exactly the reciprocal of advertising reach."
+    },
+    {
+      "metric_id": "impressions_per_dau",
+      "metric_name": "Impressions per DAU",
+      "definition": "Impressions per DAU is total ad impressions divided by daily active users over the same interval, expressing advertising exposure intensity across the entire active base. It is the product of advertising reach and Impressions per Ad User, and together with Ad eCPM it multiplicatively reconstructs Ad ARPDAU."
+    },
+    {
+      "metric_id": "live_event_participation_rate",
+      "metric_name": "Live Event Participation Rate",
+      "definition": "Live Event Participation Rate is the proportion of eligible users who perform at least one qualifying action within a time-bounded live event, divided by the count of users active during the event window who satisfied its entry conditions. Because event windows rarely align with calendar boundaries, both numerator and denominator must be evaluated over the event interval itself rather than over the enclosing reporting period."
+    },
+    {
+      "metric_id": "monthly_active_users",
+      "metric_name": "Monthly Active Users",
+      "definition": "Monthly Active Users is the count of distinct users who initiate at least one qualifying session within a defined thirty-day or calendar-month window, deduplicated across the entire window. It is neither the sum nor the mean of the constituent daily active counts. It stands as the denominator of Stickiness and of period-level ARPU."
+    },
+    {
+      "metric_id": "new_installs",
+      "metric_name": "New Installs",
+      "definition": "New Installs is the count of first-time application installation events attributed to a stated interval, as reported by the storefront or attribution provider. It is conceptually distinct from Daily New Users because installation does not entail application launch, and the gap between the two series quantifies install-to-launch loss."
+    },
+    {
+      "metric_id": "new_payers",
+      "metric_name": "New Payers",
+      "definition": "New Payers is the count of distinct users who complete their first-ever in-app purchase within a stated interval, irrespective of install date. It is a proper subset of Paying Users for that interval, whose complement comprises repeat payers; separating the two is necessary because first purchase and repeat purchase respond to materially different design levers."
+    },
+    {
+      "metric_id": "paying_users",
+      "metric_name": "Paying Users",
+      "definition": "Paying Users is the count of distinct users who complete at least one in-app purchase within a stated interval. It is deduplicated within the interval and therefore not additive across intervals, and it serves as the denominator of both ARPPU and Transactions per Paying User."
+    },
+    {
+      "metric_id": "purchase_funnel_conversion",
+      "metric_name": "Purchase Funnel Conversion",
+      "definition": "Purchase Funnel Conversion is the proportion of users advancing from one declared step of the purchase flow to the next, such as store view to item selection to checkout initiation to completed transaction, each ratio taken against the population entering the prior step. It differs from IAP Conversion in granularity and denominator, being step-conditional where IAP Conversion is a single unconditional ratio against the active base. Reporting the full step sequence is required, since a single aggregate figure obscures which step constrains throughput."
+    },
+    {
+      "metric_id": "sessions_per_dau",
+      "metric_name": "Sessions per DAU",
+      "definition": "Sessions per DAU is total sessions initiated over a stated interval divided by the count of daily active users in that interval, expressing mean daily play frequency. Its magnitude is directly governed by the inactivity timeout that delimits sessions, so it moves inversely with Avg Session Length whenever that convention changes and must be interpreted jointly with it."
+    },
+    {
+      "metric_id": "stickiness_dau_mau",
+      "metric_name": "Stickiness (DAU/MAU)",
+      "definition": "Stickiness is the ratio of daily active users to monthly active users, conventionally computed as mean DAU over the period divided by MAU for the same period, and bounded between the reciprocal of the window length and unity. It estimates the expected fraction of the monthly audience present on any given day and is thus interpretable as mean days played per user per month, scaled by window length."
+    },
+    {
+      "metric_id": "total_playtime",
+      "metric_name": "Total Playtime",
+      "definition": "Total Playtime is the aggregate duration of active sessions across all users over a stated interval, conventionally expressed in hours. As an unnormalized volume measure it confounds audience size with per-user engagement, and its decomposition into Daily Active Users, Sessions per DAU, and Avg Session Length is required for diagnostic interpretation."
+    },
+    {
+      "metric_id": "total_revenue",
+      "metric_name": "Total Revenue",
+      "definition": "Total Revenue is the aggregate monetary value recognized from all monetization streams over a stated interval, encompassing in-app purchase and advertising revenue together with any subscription, storefront, or platform-specific streams present in the title. It is the broadest revenue construct in the catalogue and is deliberately open-ended with respect to stream composition, which must therefore be declared alongside any reported figure."
+    },
+    {
+      "metric_id": "total_revenue_iap_ad",
+      "metric_name": "Total Revenue (IAP+Ad)",
+      "definition": "Total Revenue (IAP+Ad) is the explicit arithmetic sum of in-app purchase revenue and advertising revenue over a stated interval, restricted to those two streams by construction. It coincides with Total Revenue only in titles monetizing exclusively through those channels; where additional streams exist the two measures differ, and the restricted form is preferred for cross-title benchmarking because its composition is unambiguous."
+    },
+    {
+      "metric_id": "total_sessions",
+      "metric_name": "Total Sessions",
+      "definition": "Total Sessions is the count of session instances initiated across all users over a stated interval, where a session is delimited by application foregrounding and a subsequent inactivity timeout. Unlike active user counts it is an event volume rather than a deduplicated population, and it is therefore additive across intervals."
+    },
+    {
+      "metric_id": "tournament_completion_rate",
+      "metric_name": "Tournament Completion Rate",
+      "definition": "Tournament Completion Rate is the proportion of tournament entrants who satisfy the terminal condition of the tournament format, such as playing all scheduled rounds, divided by the count of users who entered. Its denominator is entrants rather than eligible users, which distinguishes it from Tournament Participation Rate and renders the two multiplicatively composable into completions per eligible user."
+    },
+    {
+      "metric_id": "tournament_participation_rate",
+      "metric_name": "Tournament Participation Rate",
+      "definition": "Tournament Participation Rate is the proportion of eligible users who enter at least one tournament within a stated interval, divided by the count of users meeting the entry criteria of that tournament during the same interval. It measures the appeal and accessibility of the competitive mode, whereas Tournament Completion Rate measures follow-through conditional on entry; the two must not be conflated because their denominators differ."
+    },
+    {
+      "metric_id": "transactions",
+      "metric_name": "Transactions",
+      "definition": "Transactions is the count of successfully completed in-app purchase events over a stated interval, excluding failed, cancelled, and refunded orders unless a net basis is explicitly declared. It is an event volume rather than a user count, and is therefore additive across intervals and greater than or equal to the corresponding count of paying users."
+    },
+    {
+      "metric_id": "transactions_per_paying_user",
+      "metric_name": "Transactions / Paying User",
+      "definition": "Transactions per Paying User is the count of completed transactions over a stated interval divided by the count of distinct paying users in that interval, measuring purchase frequency within the monetizing population. It is bounded below by unity by construction, and its product with Avg Transaction Value recovers ARPPU exactly."
+    },
+    {
+      "metric_id": "tutorial_completion_rate",
+      "metric_name": "Tutorial Completion Rate",
+      "definition": "Tutorial Completion Rate is the proportion of users who reach the designated terminal step of the tutorial sequence, divided by the count of users who initiated that sequence. Because the denominator is tutorial starters rather than installs, it excludes pre-tutorial loss and is consequently narrower in scope than FTUE Drop-off, which spans the wider onboarding path."
+    },
+    {
+      "metric_id": "weekly_active_users",
+      "metric_name": "Weekly Active Users",
+      "definition": "Weekly Active Users is the count of distinct users initiating at least one qualifying session within a defined seven-day window, deduplicated across that window. Its value depends on whether the window is a fixed calendar week or a rolling seven-day span, and the two conventions yield materially different series that must not be compared directly."
+    }
+  ]
+}

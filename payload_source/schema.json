@@ -1,0 +1,4046 @@
+{
+  "tables": [
+    {
+      "table_name": "agg_ab_readout",
+      "columns": [
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_control",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "variant_role",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_outcome",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_shipped_variant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "primary_metric",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_day_index",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "exposed_users_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "exposed_users_cumulative",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "new_assignments_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "expected_share_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "actual_share_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "share_delta_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "chi_square_p_value",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "is_srm_violation",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "sessions_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "playtime_seconds_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gameplays_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "sessions_per_exposed_user",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "ftue_completions_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "iap_revenue_usd_today",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "iap_purchases_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "payers_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "first_time_payers_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ad_revenue_usd_today",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "ad_impressions_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "total_revenue_usd_today",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "iap_revenue_usd_cumulative",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "ad_revenue_usd_cumulative",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "total_revenue_usd_cumulative",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "revenue_per_exposed_user_cumulative",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "unique_payers_cumulative",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "arppu_cumulative",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "arppu_lift_pct_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "revenue_per_exposed_user_vs_control",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "revenue_lift_pct_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d1_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d7_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d30_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d1_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d7_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d30_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "iap_conversion_pct_today",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "iap_conversion_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "crash_rate_today",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "crash_rate_lift_pct_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d1_lift_p_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d1_lift_significant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "retention_d7_lift_p_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "retention_d7_lift_significant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "iap_conversion_lift_p_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "iap_conversion_lift_significant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "revenue_lift_p_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "revenue_lift_significant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "revenue_lift_ci_lower",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "revenue_lift_ci_upper",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "avg_session_length",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "avg_session_length_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "tutorial_completion_rate",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "tutorial_completion_rate_lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "guardrails_all_green",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "decision",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "peeking_signal",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "agg_ab_readout_by_segment",
+      "columns": [
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "dimension",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_value",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "n",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "metric_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "is_control",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "lift_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "lift_pct_vs_control",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "ci_low",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "ci_high",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "p_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "significant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_low_sample",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "agg_metrics_periodic",
+      "columns": [
+        {
+          "column_name": "period_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "period_start",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "period_end",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "numerator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "denominator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "hll_sketch",
+          "data_type": "BYTES"
+        },
+        {
+          "column_name": "sample_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "source_table",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "alert_rules",
+      "columns": [
+        {
+          "column_name": "rule_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "rule_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "benchmark_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "threshold_mode",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "direction",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "warn_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "crit_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "band_warn_low",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "band_warn_high",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "breach_logic",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_core",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "benchmark_targets",
+      "columns": [
+        {
+          "column_name": "benchmark_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "period_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "target_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "direction",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "band_lo",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "band_hi",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "benchmark_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "baseline_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "genre_benchmark_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "benchmark_note",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_core",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dbt_events_raw",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_category",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_subcategory",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp_client",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ingestion_timestamp",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "event_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_genre",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "environment",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "global_user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_guest",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "auth",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ad_ids",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "geo",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_properties",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiments",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "feature_flags",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "liveops_context",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_params",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_ab_variant",
+      "columns": [
+        {
+          "column_name": "variant_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_index",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_control",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "variant_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_role",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "expected_share_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "experiment_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_outcome",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_shipped_variant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_app_version",
+      "columns": [
+        {
+          "column_name": "app_version_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "version_major",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "version_minor",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "version_patch",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "release_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "release_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_forced_update",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "end_of_life_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "first_seen_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "last_seen_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_country",
+      "columns": [
+        {
+          "column_name": "country_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country_code_iso2",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country_code_iso3",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "region",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sub_region",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "default_timezone",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "default_currency",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "default_language",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country_tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "privacy_regime",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_sim_relevant",
+          "data_type": "BOOL"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_currency",
+      "columns": [
+        {
+          "column_name": "currency_code",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "currency_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "currency_class",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_premium",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "usd_value_per_unit",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_date",
+      "columns": [
+        {
+          "column_name": "full_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "year",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "quarter",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "month",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "month_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "day_of_month",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "day_of_week",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "day_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "iso_year",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "iso_week",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "week_start_monday",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "month_start",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "quarter_start",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "is_weekend",
+          "data_type": "BOOL"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_device",
+      "columns": [
+        {
+          "column_name": "device_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "manufacturer",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "model",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "marketing_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ram_mb",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "cpu_cores",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gpu_class",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "screen_size_inches",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "screen_resolution",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ppi",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "release_year",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_sim_relevant",
+          "data_type": "BOOL"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_experiment",
+      "columns": [
+        {
+          "column_name": "experiment_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "hypothesis",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "owner",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "start_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "end_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_metric",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "guardrail_metrics",
+          "data_type": "ARRAY<STRING>"
+        },
+        {
+          "column_name": "variant_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "variants",
+          "data_type": "ARRAY<STRING>"
+        },
+        {
+          "column_name": "traffic_allocation_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "outcome",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_metric",
+      "columns": [
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_category",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "definition",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "numerator_definition",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "denominator_definition",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_events",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_tables",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "time_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "aggregation_window",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "eligibility_criteria",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "filters_applied",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segmentation_compatible",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "ab_test_compatible",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "ai_consumable",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "metric_owner",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "first_available_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "refresh_cadence",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "data_latency_sla",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "guardrails",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "known_caveats",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "deprecation_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "replacement_metric",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "metric_domain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "aggregation_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "unit",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_higher_better",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "sort_order",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "concept_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_scope",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_tables_applied",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "observability_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_canonical_concept",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_offer",
+      "columns": [
+        {
+          "column_name": "sku_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sku_family",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "category",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sku_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "price_usd",
+          "data_type": "FLOAT64"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_release_cycle",
+      "columns": [
+        {
+          "column_name": "release_cycle_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "day_number",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "release_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_theme",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_notes",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "android_adoption_d0_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "android_adoption_d1_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "android_adoption_d2_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "android_adoption_d7_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ios_adoption_d0_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ios_adoption_d1_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ios_adoption_d2_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ios_adoption_d7_pct",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ios_release_delay_days",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_rollback",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_segment",
+      "columns": [
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_exclusive",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_overlay",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "tier_display_order",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "segment_display_order",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_core",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_user",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "first_seen",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "last_seen",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "install_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "cohort_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "latest_days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "latest_player_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "acquisition_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "language",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_brand",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_model",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "os_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "install_month",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_surrogate_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "global_user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "install_country_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "acquisition_network_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "current_segment",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "valid_from",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "valid_to",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "is_current",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "version_number",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "dim_user_profile",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "primary_platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "last_country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "last_platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "install_month",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "install_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "latest_player_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "lifetime_sessions",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "lifetime_revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "lifetime_ad_impressions",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "lifetime_days_active",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "lifetime_purchases",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "avg_session_sec",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "avg_sessions_per_active_day",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "first_seen",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "last_seen",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "days_since_last_active",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ltv_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "payer_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "lifetime_spend_bucket",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "lifetime_best_score",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "favorite_mode",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "total_runs",
+          "data_type": "INT64"
+        }
+      ]
+    },
+    {
+      "table_name": "events_raw",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_properties",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "geo",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_params",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "_dlt_load_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "_dlt_id",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "exp_dim_user",
+      "columns": [
+        {
+          "column_name": "model_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "rows_exported",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "export_ran",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "last_run_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "watermark_used",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "watermark_ts",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "exp_events_raw",
+      "columns": [
+        {
+          "column_name": "model_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "rows_exported",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "export_ran",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "last_run_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "watermark_used",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "watermark_ts",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ab_assignment",
+      "columns": [
+        {
+          "column_name": "assignment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "global_user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "assignment_version",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "assignment_timestamp_utc",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "assignment_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "assignment_sim_day",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country_code",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version_key",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "release_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "acquisition_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "acquisition_network_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_segment",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_first_session_assignment",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "exposure_event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "exposure_event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_system",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "is_excluded_from_readout",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "exclusion_reason",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ab_daily",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "exposed_users",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "cum_exposed_users",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "payers",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "cum_payers",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "payer_conversion",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "arppu",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "coins_granted",
+          "data_type": "INT64"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ab_exposure",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "first_exposure_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "last_exposure_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "exposure_days",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "converted",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "first_conversion_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "purchases",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "coins_granted",
+          "data_type": "INT64"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ab_exposure_daily",
+      "columns": [
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "exposure_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "assignment_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "days_since_assignment",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_control",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "variant_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_shipped_variant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "experiment_day_index",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country_code",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "release_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "current_segment",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sessions_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "playtime_seconds_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gameplays_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "crashes_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_new_install_today",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_returning_today",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "completed_ftue_today",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "iap_revenue_usd_today",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "iap_purchases_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_payer_today",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_first_purchase_today",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "lifetime_iap_revenue_usd_eod",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "ad_impressions_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ad_revenue_usd_today",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "total_revenue_usd_today",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ab_srm_daily",
+      "columns": [
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "experiment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "srm_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_control",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "variant_label",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "variant_role",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "expected_share_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "experiment_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "experiment_outcome",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_shipped_variant",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "experiment_day_index",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "variant_count_in_experiment",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "cumulative_users",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "experiment_total_users_eod",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "actual_share_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "expected_users",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "share_delta_pct",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "new_assignments_today",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "chi_square_stat",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "chi_square_df",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "chi_square_p_value",
+          "data_type": "NUMERIC"
+        },
+        {
+          "column_name": "is_srm_violation",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "updated_date",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ad_events",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "ad_event_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ad_network",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "placement",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ad_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_app_health",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "health_event_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "severity",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "error_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "error_code",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "surface",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "crash_reason",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "last_screen",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "latency_duration_ms",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "fps",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "os_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_competition",
+      "columns": [
+        {
+          "column_name": "entry_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "competition_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "competition_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "tournament_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "live_event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "entry_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "best_score",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "progress",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "target",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "progress_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "best_gameplay_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "best_rank",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "final_rank",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "final_score",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "entry_fee_coins",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "entry_tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "competition_status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "reward_claimed",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "reward_ref",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "entry_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "joined_at",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "completed_at",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "reward_claimed_at",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_currency_transactions",
+      "columns": [
+        {
+          "column_name": "transaction_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "gameplay_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "currency_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "flow_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "flow_category",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "amount",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "balance_before",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "balance_after",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_ftue_steps",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "ftue_event_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "ftue_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "step_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "step_index",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "completion_time_sec",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "skip_reason",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "total_steps",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "entry_point",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_gameplay",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "gameplay_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_mode",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "attempt_number",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "entry_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "start_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "outcome",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "end_reason",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "duration_sec",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "score",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "moves_used",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "level_reached",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "stars",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_metrics_daily",
+      "columns": [
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "numerator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "denominator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "hll_sketch",
+          "data_type": "BYTES"
+        },
+        {
+          "column_name": "sample_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "source_table",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_progression",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "progression_event_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "player_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "xp",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "update_reason",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "feature_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "unlock_trigger",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_purchases",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "order_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "offer_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sku_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sku_family",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "category",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "store",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "price_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_successful_purchase",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_retention_daily",
+      "columns": [
+        {
+          "column_name": "cohort_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "cohort_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "retained_users",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "retention_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_sessions",
+      "columns": [
+        {
+          "column_name": "session_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_number",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_first_session",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "session_start_ts",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "session_end_ts",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "event_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "session_duration_sec",
+          "data_type": "INT64"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_tasks",
+      "columns": [
+        {
+          "column_name": "task_instance_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "task_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "task_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "task_period",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "assignment_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "target",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "progress_before",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "progress_after",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "progress_pct",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "reward_claimed",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "reward_ref",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "assigned_at",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "completed_at",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "claimed_at",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_user_activity_daily",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "session_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "event_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_new_install",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_returning",
+          "data_type": "BOOL"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_user_daily",
+      "columns": [
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sessions_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "total_session_sec",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "avg_session_sec",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "has_session",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "revenue_iap_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "purchases_count",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ad_impressions",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "ad_revenue_usd",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "is_payer",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "coins_earned",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "coins_spent",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gems_earned",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gems_spent",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "events_joined",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "tournament_entries",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gameplay_runs",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "runs_classic",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "runs_blitz",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "runs_target",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "best_score",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "avg_score",
+          "data_type": "FLOAT64"
+        }
+      ]
+    },
+    {
+      "table_name": "fact_user_segment_daily",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "snapshot_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "lifecycle_segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "engagement_segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "monetization_segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "overlay_segment_ids",
+          "data_type": "ARRAY<STRING>"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "active_days_7d",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "active_days_28d",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "sessions_7d",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "spend_usd_to_date",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "spend_usd_7d",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "ftue_completed",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "rewarded_ad_views_to_date",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "has_continue_spend",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "has_competition_entry",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "has_task_claim",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "days_since_last_active",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "days_since_last_purchase",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "active_days_7d_delta",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "spend_7d_delta",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "sessions_7d_delta",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "funnel_definitions",
+      "columns": [
+        {
+          "column_name": "funnel_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "funnel_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "domain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "funnel_steps",
+          "data_type": "ARRAY<STRUCT<step_order INT64, step_key STRING, step_name STRING, source_table STRING, step_condition STRING>>"
+        },
+        {
+          "column_name": "is_core",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "status",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "mart_metrics",
+      "columns": [
+        {
+          "column_name": "obs_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "observed_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "numerator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "denominator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "sample_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_table",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "mart_metrics_cohort",
+      "columns": [
+        {
+          "column_name": "obs_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "observed_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "numerator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "denominator",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "sample_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_table",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "seg_definitions",
+      "columns": [
+        {
+          "column_name": "segment_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_key",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "segment_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "tier",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "is_exclusive",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "business_meaning",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "rule_sql",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "source_tables",
+          "data_type": "ARRAY<STRING>"
+        },
+        {
+          "column_name": "is_core",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "created_at",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "updated_at",
+          "data_type": "TIMESTAMP"
+        }
+      ]
+    },
+    {
+      "table_name": "session_event_seq",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "player_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "gameplay_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_mode",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "seq_in_session",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "events_in_session",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "prev_event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "next_event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sec_since_prev",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "seq_in_run",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_session_first_event",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "is_session_last_event",
+          "data_type": "BOOL"
+        }
+      ]
+    },
+    {
+      "table_name": "stg_alert_metrics_94012474",
+      "columns": [
+        {
+          "column_name": "obs_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "metric_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "observed_value",
+          "data_type": "FLOAT64"
+        },
+        {
+          "column_name": "sample_size",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "source_grain",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        }
+      ]
+    },
+    {
+      "table_name": "stg_events_flattened",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "org_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "install_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "language",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "acquisition_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "days_since_install",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "player_level",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "device_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "os_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "app_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_brand",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device_model",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "region",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "city",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "timezone",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session_number",
+          "data_type": "INT64"
+        },
+        {
+          "column_name": "is_first_session",
+          "data_type": "BOOL"
+        },
+        {
+          "column_name": "event_source_type",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "sdk_version",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_params",
+          "data_type": "JSON"
+        }
+      ]
+    },
+    {
+      "table_name": "stg_game_94012474__events_raw",
+      "columns": [
+        {
+          "column_name": "event_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_name",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "TIMESTAMP"
+        },
+        {
+          "column_name": "event_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "game_client_id",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "country",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "platform",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "user_properties",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "device",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "geo",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "session",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_source",
+          "data_type": "STRING"
+        },
+        {
+          "column_name": "event_params",
+          "data_type": "STRING"
+        }
+      ]
+    }
+  ]
+}

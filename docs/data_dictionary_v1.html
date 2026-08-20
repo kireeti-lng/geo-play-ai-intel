@@ -1,0 +1,615 @@
+<title>Data Dictionary V1</title>
+<style>
+  :root{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6;
+    --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2;
+    --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    --radius:14px; --radius-sm:9px;
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    --font-mono:Consolas,Monaco,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,ui-monospace,monospace;
+    --measure:70ch;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+      --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+      --line:#232E38; --line-2:#2E3B46;
+      --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+      --ok:#35E0A1; --ok-soft:#0E2A22;
+      --shim:#4FC3F7; --shim-soft:#0E2530;
+      --cap:#E0A94A; --cap-soft:#33280F;
+      --blk:#EB7568; --blk-soft:#331815;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+      --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6; --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2; --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+    --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+    --line:#232E38; --line-2:#2E3B46;
+    --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+    --ok:#35E0A1; --ok-soft:#0E2A22; --shim:#4FC3F7; --shim-soft:#0E2530;
+    --cap:#E0A94A; --cap-soft:#33280F; --blk:#EB7568; --blk-soft:#331815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--font-sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    transition:background .4s ease,color .4s ease;
+  }
+  ::selection{background:var(--accent-soft);color:var(--accent-ink)}
+
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent);
+    transition:width .12s linear}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+
+  header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--ground) 86%,transparent);
+    backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);transition:background .4s ease,border-color .4s ease}
+  .top .row{display:flex;align-items:center;gap:16px;min-height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;color:var(--ink)}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .brand b{font-weight:600}
+  .brand span{color:var(--muted)}
+  .top nav{margin-left:auto;display:none;gap:4px}
+  @media(min-width:960px){.top nav{display:flex}}
+  .top nav a{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.02em;color:var(--muted);
+    text-decoration:none;padding:6px 9px;border-radius:7px;transition:color .2s,background .2s}
+  .top nav a:hover{color:var(--ink);background:var(--surface-2)}
+  .top nav a.active{color:var(--accent-ink);background:var(--accent-soft)}
+
+  .theme-btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;
+    padding:7px 13px;transition:border-color .2s,transform .2s,background .3s,color .3s}
+  .theme-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .theme-btn svg{width:15px;height:15px}
+  .theme-btn .ico-moon{display:none}
+  :root[data-theme="dark"] .theme-btn .ico-moon{display:block}
+  :root[data-theme="dark"] .theme-btn .ico-sun{display:none}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .theme-btn .ico-moon{display:block}
+    :root:not([data-theme="light"]) .theme-btn .ico-sun{display:none}
+  }
+
+  .hero{padding:clamp(46px,8vw,88px) 0 clamp(30px,5vw,52px)}
+  .eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent-ink);display:inline-flex;align-items:center;gap:9px;margin:0 0 18px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.025em;font-weight:800;
+    margin:0 0 20px;text-wrap:balance;max-width:18ch}
+  h1 .grad{background:linear-gradient(96deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--ink-2);max-width:60ch;margin:0 0 26px;line-height:1.55}
+  .meta-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 11px;display:inline-flex;gap:7px;align-items:center}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.draft{color:var(--cap);border-color:color-mix(in srgb,var(--cap) 40%,var(--line));background:var(--cap-soft)}
+
+  section{padding:clamp(38px,6vw,66px) 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin:0 0 26px}
+  .sec-num{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);font-weight:600;padding-top:.35em;min-width:2.4em}
+  h2{font-size:clamp(1.5rem,3.2vw,2.05rem);letter-spacing:-.02em;font-weight:750;margin:0;text-wrap:balance;line-height:1.12}
+  .sec-head p{margin:8px 0 0;color:var(--muted);max-width:var(--measure);font-size:1rem}
+  h3{font-size:1.12rem;letter-spacing:-.01em;font-weight:700;margin:30px 0 12px}
+  p{max-width:var(--measure)}
+  a{color:var(--accent-ink);text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px}
+
+  .prose>p{margin:0 0 15px;color:var(--ink-2)}
+
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .cols-4{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .stat .n{font-family:var(--font-mono);font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums}
+  .stat .k{margin-top:9px;font-size:.9rem;color:var(--muted);line-height:1.4}
+
+  .callout{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);background:var(--surface-2);display:flex;gap:14px;align-items:flex-start}
+  .callout .mk{font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+  .callout.key{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}
+  .callout.key .mk{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .callout.key .mk{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .callout.key .mk{color:#04191c}}
+  .callout.warn{background:var(--cap-soft);border-color:color-mix(in srgb,var(--cap) 34%,var(--line))}
+  .callout.warn .mk{background:var(--cap);color:#fff}
+  .callout p{margin:0;color:var(--ink-2);max-width:none}
+
+  code{font-family:var(--font-mono);font-size:.87em;background:var(--surface-3);padding:.12em .42em;border-radius:5px;color:var(--accent-ink);border:1px solid var(--line)}
+  .code{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:16px 0}
+  .code .bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .code .bar .t{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+  .code .bar .dots{display:flex;gap:6px;margin-right:4px}
+  .code .bar .dots i{width:10px;height:10px;border-radius:50%;background:var(--line-2);display:block}
+  .code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:var(--ink-2)}
+  .code pre .c{color:var(--faint)}
+  .code pre .k{color:var(--accent-ink);font-weight:600}
+  .code pre .s{color:var(--ok)}
+
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:640px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface-2);position:sticky;top:0;white-space:nowrap;font-weight:600}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.mono,.mono{font-family:var(--font-mono);font-size:.82rem}
+  td .path{color:var(--accent-ink)}
+  .num-c{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.02em;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.builtin{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+  .pill.shim{background:var(--shim-soft);color:var(--shim);border-color:color-mix(in srgb,var(--shim) 30%,transparent)}
+  .pill.capability{background:var(--cap-soft);color:var(--cap);border-color:color-mix(in srgb,var(--cap) 30%,transparent)}
+  .pill.config{background:var(--blk-soft);color:var(--blk);border-color:color-mix(in srgb,var(--blk) 30%,transparent)}
+  .pill.layer{background:var(--surface-3);color:var(--muted);border-color:var(--line)}
+
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .fbtn{cursor:pointer;font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;transition:all .2s}
+  .fbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .fbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  :root[data-theme="dark"] .fbtn.on{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fbtn.on{color:#04191c}}
+  tr.hide{display:none}
+
+  figure{margin:8px 0 0}
+  .diagram{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+  .diagram svg{width:100%;min-width:660px;height:auto;color:var(--ink);display:block}
+  .dg-box{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+  .dg-band{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+  .dg-nplus{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+  .dg-t{fill:var(--ink);font-family:var(--font-mono);font-size:13px;font-weight:600}
+  .dg-tm{fill:var(--muted);font-family:var(--font-mono);font-size:11px}
+  .dg-ta{fill:var(--accent-ink);font-family:var(--font-mono);font-size:13px;font-weight:700}
+  .dg-arrow{stroke:var(--muted);stroke-width:1.6;fill:none}
+  .dg-lbl{fill:var(--faint);font-family:var(--font-mono);font-size:10.5px}
+  figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;font-style:italic;max-width:var(--measure)}
+
+  .timeline{position:relative;margin-top:8px}
+  .timeline::before{content:"";position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--accent),var(--line));border-radius:2px}
+  @media(min-width:720px){.timeline::before{left:23px}}
+  .phase{position:relative;padding:0 0 22px 56px}
+  @media(min-width:720px){.phase{padding-left:66px}}
+  .phase .node{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:var(--surface);border:1.6px solid var(--accent);color:var(--accent-ink);font-family:var(--font-mono);font-weight:700;font-size:.86rem;box-shadow:var(--shadow);z-index:1}
+  @media(min-width:720px){.phase .node{width:48px;height:48px}}
+  .phase .body{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .phase .body:hover{transform:translateX(3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .phase h3{margin:0 0 4px;font-size:1.08rem}
+  .phase .goal{color:var(--muted);font-size:.92rem;margin:0 0 13px}
+  .phase ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:.92rem}
+  .phase ul li{margin:5px 0}
+  .phase ul li::marker{color:var(--accent)}
+  .exit{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line-2);font-size:.85rem;color:var(--ink-2);display:flex;gap:9px;align-items:flex-start}
+  .exit b{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ok);white-space:nowrap;margin-top:2px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .tag{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);background:var(--surface-3);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .step{display:flex;gap:15px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 18px;box-shadow:var(--shadow);transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateX(3px);border-color:var(--accent)}
+  .step::before{counter-increment:s;content:counter(s);font-family:var(--font-mono);font-weight:700;font-size:.9rem;color:var(--accent-ink);
+    background:var(--accent-soft);border-radius:8px;width:30px;height:30px;display:grid;place-items:center;flex:none}
+  .step div{font-size:.94rem;color:var(--ink-2)}
+  .step div b{color:var(--ink)}
+
+  ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.95rem}
+  ul.clean li .b{color:var(--accent);margin-top:.15em;flex:none}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted)}
+  footer .fx{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  footer .np{font-family:var(--font-mono);font-size:.8rem}
+  footer a{font-weight:600}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+
+<div id="progress" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap row">
+    <span class="brand"><span class="dot"></span><b>DATA&nbsp;DICTIONARY</b><span>/ v1</span></span>
+    <nav id="toc">
+      <a href="#what">What it does</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#concepts">Concepts</a>
+      <a href="#decisions">Decisions</a>
+      <a href="#schema">Output</a>
+      <a href="#limits">Limits</a>
+      <a href="#v2">V2</a>
+    </nav>
+    <button class="theme-btn" id="theme" aria-label="Toggle colour theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.2 8.2 0 0 1 9.5 4 8.3 8.3 0 1 0 20 14.5Z"/></svg>
+      <span class="lbl">Theme</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow reveal">Build notes · data_dictionary.py · Version 1</p>
+    <h1 class="reveal">A typed schema, turned into a <span class="grad">described dictionary</span>.</h1>
+    <p class="lede reveal">The GeoPlay deliverable: a JSON schema export — tables, columns, and their SQL data types — becomes a per-column data dictionary with a business description and a confidence rating on every row. This is exactly what the script does and the reasoning behind each design choice — no more, no less than what the code runs.</p>
+    <div class="meta-chips reveal">
+      <span class="chip">script <b>data_dictionary.py</b></span>
+      <span class="chip">input <b>schema.json (typed)</b></span>
+      <span class="chip">batch size <b>10 tables</b></span>
+      <span class="chip">temperature <b>0.1</b></span>
+      <span class="chip">model <b>openai/gpt-5.6-luna</b></span>
+      <span class="chip">outputs <b>JSON + CSV</b></span>
+      <span class="chip draft">status DRAFT — descriptions need review</span>
+    </div>
+  </div>
+
+  <!-- 01 WHAT -->
+  <section id="what">
+    <div class="sec-head reveal"><span class="sec-num">01</span><div><h2>What it does</h2><p>One input file, two output files, one API loop in between.</p></div></div>
+    <div class="prose reveal">
+      <p>The input is a JSON schema at <code>payload_source/schema.json</code> — a list of tables, each carrying its columns and each column's SQL <code>data_type</code>. Because the export is already structured by table, the script does no grouping of its own: it loads the file, batches the tables, and asks the model to describe each column <i>in the context of its table and its type</i>. The output is a data dictionary with one row per <b>table + column</b>, each carrying a business description and a confidence rating.</p>
+    </div>
+    <div class="grid cols-3 reveal" style="margin:20px 0">
+      <div class="card stat"><div class="n">JSON</div><div class="k">schema input — already grouped by table, with data types</div></div>
+      <div class="card stat"><div class="n">0.1</div><div class="k">temperature — tuned for deterministic, factual output</div></div>
+      <div class="card stat"><div class="n">4</div><div class="k">fields per output row — table, column, description, confidence</div></div>
+    </div>
+    <div class="prose reveal">
+      <p>The one big change from the earlier CSV version: the model no longer works from a bare name. Each column now arrives as <code>column_name (DATA_TYPE)</code>, so a <code>TIMESTAMP</code> is described as a point in time, a <code>BOOL</code> as a status flag, and a <code>NUMERIC</code> as a metric — the type is a fact fed in, not a guess.</p>
+    </div>
+    <div class="callout key reveal" style="margin-top:6px"><span class="mk">Principle</span><p>Give the model the context the source already has. Table grouping and SQL types were sitting in the schema export — passing them through costs almost nothing and sharpens every description.</p></div>
+  </section>
+
+  <!-- 02 PIPELINE -->
+  <section id="pipeline">
+    <div class="sec-head reveal"><span class="sec-num">02</span><div><h2>The pipeline</h2><p>Four stages. Only one of them talks to a model.</p></div></div>
+    <figure class="reveal">
+      <div class="diagram">
+        <svg viewBox="0 0 900 300" role="img" aria-label="Diagram: a JSON schema of tables, columns, and data types is loaded and its tables and columns counted, with no model involved. The tables are split into batches of 10 and sent to the model in JSON mode at temperature 0.1, one call per batch, each column formatted with its data type. Each reply is parsed, cleaned to four fields, and collected in memory. After the last batch, the collected rows are written once to a JSON file and a CSV file.">
+          <defs>
+            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><polygon points="0,0 9,4.5 0,9" fill="var(--muted)"/></marker>
+            <marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><polygon points="0,0 9,4.5 0,9" fill="var(--accent)"/></marker>
+          </defs>
+
+          <!-- source -->
+          <rect class="dg-box" x="24" y="44" width="168" height="82" rx="11"/>
+          <text class="dg-t" x="108" y="74" text-anchor="middle">schema.json</text>
+          <text class="dg-tm" x="108" y="95" text-anchor="middle">tables · columns</text>
+          <text class="dg-tm" x="108" y="110" text-anchor="middle">+ data types</text>
+
+          <line class="dg-arrow" x1="192" y1="85" x2="244" y2="85" marker-end="url(#ah)"/>
+          <text class="dg-lbl" x="198" y="77">load</text>
+
+          <!-- load + count -->
+          <rect class="dg-box" x="246" y="34" width="196" height="102" rx="11"/>
+          <text class="dg-t" x="344" y="62" text-anchor="middle">load + count</text>
+          <text class="dg-tm" x="344" y="84" text-anchor="middle">dict or list shape</text>
+          <text class="dg-tm" x="344" y="100" text-anchor="middle">already grouped by table</text>
+          <text class="dg-tm" x="344" y="116" text-anchor="middle">no model involved</text>
+
+          <line class="dg-arrow" x1="442" y1="85" x2="496" y2="85" marker-end="url(#ah)"/>
+          <text class="dg-lbl" x="450" y="77">split</text>
+
+          <!-- batches -->
+          <rect class="dg-band" x="498" y="44" width="168" height="82" rx="11"/>
+          <text class="dg-ta" x="582" y="74" text-anchor="middle">batches</text>
+          <text class="dg-tm" x="582" y="95" text-anchor="middle">10 tables each</text>
+          <text class="dg-tm" x="582" y="110" text-anchor="middle">typed columns</text>
+
+          <line class="dg-arrow" x1="666" y1="85" x2="720" y2="85" marker-end="url(#ah)"/>
+
+          <!-- model -->
+          <rect class="dg-nplus" x="722" y="44" width="154" height="82" rx="11"/>
+          <text class="dg-ta" x="799" y="70" text-anchor="middle">the model</text>
+          <text class="dg-tm" x="799" y="90" text-anchor="middle">JSON mode · temp 0.1</text>
+          <text class="dg-tm" x="799" y="105" text-anchor="middle">one call per batch</text>
+
+          <!-- collect back -->
+          <line class="dg-arrow" x1="799" y1="126" x2="799" y2="168" style="stroke:var(--accent)" marker-end="url(#aha)"/>
+          <line class="dg-arrow" x1="799" y1="168" x2="466" y2="168" style="stroke:var(--accent)"/>
+          <line class="dg-arrow" x1="466" y1="168" x2="466" y2="196" style="stroke:var(--accent)" marker-end="url(#aha)"/>
+          <text class="dg-lbl" x="512" y="161">parsed · cleaned to 4 fields · collected</text>
+
+          <!-- save -->
+          <rect class="dg-band" x="350" y="198" width="232" height="66" rx="11"/>
+          <text class="dg-ta" x="466" y="226" text-anchor="middle">write outputs — once, at the end</text>
+          <text class="dg-tm" x="466" y="248" text-anchor="middle">after every batch has returned</text>
+
+          <line class="dg-arrow" x1="350" y1="231" x2="296" y2="231" marker-end="url(#ah)"/>
+
+          <!-- outputs -->
+          <rect class="dg-box" x="112" y="198" width="176" height="30" rx="8"/>
+          <text class="dg-t" x="200" y="218" text-anchor="middle">data_dictionary.json</text>
+          <rect class="dg-box" x="112" y="234" width="176" height="30" rx="8"/>
+          <text class="dg-t" x="200" y="254" text-anchor="middle">data_dictionary.csv</text>
+        </svg>
+      </div>
+      <figcaption>Only one of the four stages needs a model. Loading, counting and saving are ordinary Python — the model is called once per batch of 10 tables at temperature 0.1, and the two output files are written a single time after the last batch returns.</figcaption>
+    </figure>
+  </section>
+
+  <!-- 03 CONCEPTS -->
+  <section id="concepts">
+    <div class="sec-head reveal"><span class="sec-num">03</span><div><h2>Concepts in the script</h2><p>Every technique the code actually uses, grouped by pipeline stage. Filter to revise one stage at a time.</p></div></div>
+    <div class="filters reveal" id="ifilters">
+      <button class="fbtn on" data-f="all">All · 21</button>
+      <button class="fbtn" data-f="read">Loading the schema</button>
+      <button class="fbtn" data-f="ask">Asking the model</button>
+      <button class="fbtn" data-f="save">Saving output</button>
+    </div>
+    <div class="tbl-wrap reveal">
+      <table id="itable">
+        <thead><tr><th>#</th><th>Concept</th><th>Why it's here</th><th>Stage</th></tr></thead>
+        <tbody>
+          <tr data-s="read"><td class="num-c">1</td><td>JSON schema as input</td><td><code>json.load()</code> reads a structured schema file — tables, columns, and each column's <code>data_type</code> — instead of a flat CSV</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="read"><td class="num-c">2</td><td>Flexible input shape</td><td>Handles both <code>{"tables": [...]}</code> and a raw <code>[...]</code> list, so the loader isn't brittle about the export's top level</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="read"><td class="num-c">3</td><td>Standard library over a package</td><td><code>json</code>, <code>csv</code> and <code>os</code> all ship with Python — no install needed to read or write</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="read"><td class="num-c">4</td><td>Types carried in</td><td>Each column arrives with its SQL type, which the script passes to the model as a fact rather than asking it to guess</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="read"><td class="num-c">5</td><td>Counting before calling</td><td>Summing <code>len(columns)</code> per table reports table and column totals up front, before any paid API call</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="read"><td class="num-c">6</td><td>Env-based API key</td><td><code>load_dotenv()</code> reads <code>OPENROUTER_API_KEY</code> from the environment — the key is never hardcoded</td><td><span class="pill shim">Load</span></td></tr>
+          <tr data-s="ask"><td class="num-c">7</td><td>Batching</td><td><code>BATCH_SIZE = 10</code> tables per request instead of one call per table or one giant call — the cost, reliability and speed trade-off</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">8</td><td>Chunking with <code>islice</code></td><td><code>chunk_list</code> uses a generator and the walrus operator (<code>while chunk := ...</code>) to slice the table list into batches lazily</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">9</td><td>Low temperature</td><td><code>temperature=0.1</code> keeps output deterministic and factual — the same schema tends to produce the same descriptions</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">10</td><td>Type-aware prompt</td><td>Each column is formatted as <code>column_name (DATA_TYPE)</code>, so a <code>TIMESTAMP</code>, <code>BOOL</code> or <code>NUMERIC</code> is described with the right semantics</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">11</td><td>Rich domain priming</td><td>A Data-Architect persona plus GeoPlay's six pillars (players, segments, sessions, ads, A/B tests, revenue) shape every description</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">12</td><td>Anti-tautology rule</td><td>The prompt explicitly forbids restating the name — <code>player_id</code> must be defined, not echoed back as "the player ID"</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">13</td><td>JSON mode</td><td><code>response_format={"type":"json_object"}</code> makes the reply machine-readable, so no string cleanup is needed</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">14</td><td>Self-rated confidence</td><td>The prompt asks the model to tag each row <code>high</code>, <code>medium</code>, or <code>low</code> against defined criteria — a built-in triage signal</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">15</td><td>Parsing the reply</td><td><code>json.loads()</code> turns the returned text into Python data, then <code>.get("columns", [])</code> pulls the rows</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="ask"><td class="num-c">16</td><td>Guarded parse</td><td>A <code>try/except (json.JSONDecodeError, KeyError)</code> around the parse lets a malformed batch fail alone instead of killing the run</td><td><span class="pill builtin">Ask</span></td></tr>
+          <tr data-s="save"><td class="num-c">17</td><td>Cleaning the rows</td><td>Each returned row is rebuilt to exactly four keys — dropping any <code>data_type</code> the model echoed and defaulting a missing confidence to <code>high</code></td><td><span class="pill capability">Save</span></td></tr>
+          <tr data-s="save"><td class="num-c">18</td><td>Creating the folder</td><td><code>os.makedirs("output", exist_ok=True)</code> makes the folder if absent and stays quiet if present</td><td><span class="pill capability">Save</span></td></tr>
+          <tr data-s="save"><td class="num-c">19</td><td>Rich JSON envelope</td><td>The JSON wraps the rows with <code>domain</code>, <code>source_file</code>, <code>total_tables</code> and <code>total_columns</code>, so the file documents its own provenance</td><td><span class="pill capability">Save</span></td></tr>
+          <tr data-s="save"><td class="num-c">20</td><td>Two formats, one dataset</td><td>JSON for programs, CSV for people — the same cleaned rows written twice, no extra API cost</td><td><span class="pill capability">Save</span></td></tr>
+          <tr data-s="save"><td class="num-c">21</td><td>CSV with <code>DictWriter</code> + <code>utf-8-sig</code></td><td><code>extrasaction="ignore"</code> writes only the four fields in a fixed order; the BOM keeps accented text intact in Excel</td><td><span class="pill capability">Save</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 04 DECISIONS -->
+  <section id="decisions">
+    <div class="sec-head reveal"><span class="sec-num">04</span><div><h2>Design decisions, and the reasoning</h2><p>Four choices baked into the script. Each had a plausible alternative.</p></div></div>
+
+    <h3>Why 10 tables per request</h3>
+    <div class="prose reveal">
+      <p>The batch size sets three things at once. <b>One table per request</b> would mean as many calls as there are tables: slow, and a fresh chance to fail on each. <b>Every table in one request</b> would be a single call, but the reply would be enormous and far more likely to be truncated — and truncated JSON is unparseable, so a single overrun loses the whole response.</p>
+      <p>Ten lands in the middle, and it dropped from twenty in the earlier version for a reason: now that every column carries its data type <i>and</i> a fuller, two-sentence description comes back, each table's share of the reply is larger. A smaller batch keeps each JSON object comfortably within reach and the blast radius small if one batch fails.</p>
+    </div>
+    <div class="callout key reveal" style="margin:18px 0"><span class="mk">Rule of thumb</span><p>Pick the batch size from your <i>output</i> budget, not your input. Input is cheap and rarely the constraint; the reply is what gets truncated, and with structured JSON a truncation isn't a partial result — it's an unusable one.</p></div>
+
+    <h3>Why feed the data type with every column</h3>
+    <div class="prose reveal">
+      <p>A bare name is ambiguous; a name plus its type is nearly resolved. Sent as <code>ended_at (TIMESTAMP)</code> the model knows it is a point in time; <code>is_payer (BOOL)</code> is clearly a status flag; <code>arpdau (NUMERIC)</code> is a metric. The prompt makes this explicit with a "Respect Data Types" rule, so the type shapes precision and semantics rather than being ignored.</p>
+      <p>The type was already sitting in the schema export — passing it through costs a few input tokens per column and measurably sharpens the output. Input tokens are the cheap half of the bill, so this is close to free.</p>
+    </div>
+
+    <h3>Why pin the temperature to 0.1</h3>
+    <div class="prose reveal">
+      <p>A data dictionary is reference material, not creative writing. <code>temperature=0.1</code> pushes the model toward its most likely, most factual phrasing and away from stylistic variation — so re-running the same schema tends to produce the same descriptions, and the output reads as documentation rather than improvisation.</p>
+      <p>It pairs with the anti-tautology rule: low temperature keeps the wording stable, and the rule keeps it from settling on the laziest stable answer — restating the column name.</p>
+    </div>
+
+    <h3>Why re-clean the model's rows before saving</h3>
+    <div class="prose reveal">
+      <p>Even in JSON mode the model can echo back extra keys — most obviously the <code>data_type</code> it was shown. Rather than trust the reply's shape, the script rebuilds each row from scratch with exactly four keys (<code>table_name</code>, <code>column_name</code>, <code>confidence</code>, <code>description</code>) and defaults a missing confidence to <code>high</code>. The output schema is enforced by the code, not requested from the model.</p>
+      <p>The cleaned rows are accumulated and written once at the end — <b>JSON</b> with a metadata envelope (<code>domain</code>, <code>source_file</code>, <code>total_tables</code>, <code>total_columns</code>) for programs, and <b>CSV</b> for analysts, the <code>utf-8-sig</code> BOM keeping accented text readable in Excel.</p>
+    </div>
+  </section>
+
+  <!-- 05 SCHEMA -->
+  <section id="schema">
+    <div class="sec-head reveal"><span class="sec-num">05</span><div><h2>The output shape</h2><p>Four fields per row, wrapped in a small envelope.</p></div></div>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">output/data_dictionary.json — envelope + one entry per table column</span></div>
+      <pre>{
+  <span class="k">"domain"</span>:         <span class="s">"GeoPlay Agentic AI Mobile Gaming Analytics"</span>,
+  <span class="k">"source_file"</span>:    <span class="s">"payload_source\schema.json"</span>,
+  <span class="k">"total_tables"</span>:   <span class="c">&lt;count of tables in the schema&gt;</span>,
+  <span class="k">"total_columns"</span>:  <span class="c">&lt;count of rows described&gt;</span>,
+  <span class="k">"columns"</span>: [
+    {
+      <span class="k">"table_name"</span>:   <span class="s">"dim_ab_variant"</span>,
+      <span class="k">"column_name"</span>:  <span class="s">"variant_id"</span>,
+      <span class="k">"confidence"</span>:   <span class="s">"high"</span>,
+      <span class="k">"description"</span>:  <span class="s">"Unique identifier of an A/B test variant..."</span>
+    }
+  ]
+}</pre>
+    </div>
+    <div class="prose reveal">
+      <p>Each entry carries exactly four fields — <code>table_name</code>, <code>column_name</code>, <code>confidence</code> (one of <code>high</code>, <code>medium</code>, <code>low</code>), and <code>description</code>. The <code>data_type</code> the model was <i>shown</i> is deliberately not carried into the output — it's an input signal, cleaned back out so the dictionary stays about meaning, not storage. Around the list sits an envelope with the domain, the source path, and table and column totals, so the file documents its own provenance even after it drifts away from the conversation that produced it.</p>
+      <p>The CSV holds the same four fields, one row per table column, ordered <code>table_name, column_name, confidence, description</code> — the same data, shaped for a spreadsheet.</p>
+    </div>
+  </section>
+
+  <!-- 06 LIMITS -->
+  <section id="limits">
+    <div class="sec-head reveal"><span class="sec-num">06</span><div><h2>What this output is, and isn't</h2><p>The honest boundary around the deliverable.</p></div></div>
+    <div class="prose reveal">
+      <p>Every description here is <b>inferred from a name, its table, and its SQL type</b>. That's more than the earlier CSV version had — the type genuinely narrows the guesswork — but the schema still carries no sample values, no nullability, no row counts, and no existing documentation. The model never touched the warehouse; it read a schema export and reasoned from it.</p>
+      <p>The failure mode that matters isn't a wrong answer, it's a <i>confident-sounding</i> wrong answer. A dictionary entry that reads authoritatively but is invented is worse than a blank one, because nobody goes back to check it. This is why the <code>confidence</code> field exists on every row: sort by it and read the <code>low</code> and <code>medium</code> rows first. Treat it as triage, not proof — a <code>high</code> is where to look last, not a guarantee.</p>
+    </div>
+    <div class="grid cols-2 reveal" style="margin-top:14px">
+      <div class="card"><h3 style="margin-top:0">Fit for</h3><ul class="clean">
+        <li><span class="b">✓</span><span>A first draft that turns a typed schema into readable documentation</span></li>
+        <li><span class="b">✓</span><span>Onboarding context — an approximate map beats no map</span></li>
+        <li><span class="b">✓</span><span>Finding naming inconsistencies across every table in the schema</span></li>
+        <li><span class="b">✓</span><span>A starting point analysts correct rather than author from scratch</span></li>
+      </ul></div>
+      <div class="card"><h3 style="margin-top:0">Not fit for</h3><ul class="clean">
+        <li><span class="b">✗</span><span>Publishing as authoritative documentation unreviewed</span></li>
+        <li><span class="b">✗</span><span>Compliance or governance artifacts needing verified lineage</span></li>
+        <li><span class="b">✗</span><span>Asserting units, allowed values, or exact semantics — the type hints at these but sample data would confirm them</span></li>
+        <li><span class="b">✗</span><span>Deciding whether two same-named columns really hold the same thing</span></li>
+      </ul></div>
+    </div>
+    <div class="prose reveal" style="margin-top:16px">
+      <p>One structural note on repeated columns: because the script describes each table independently, a column that appears in several tables gets a <i>separate</i> row — and separate wording — each time. That safely preserves cases where <code>platform</code> means the OS in one table and the ad platform in another. The flip side is there's no consistency pass: two rows for a column that really does mean the same thing may come back phrased slightly differently, though the low temperature keeps that drift small.</p>
+    </div>
+  </section>
+
+  <!-- 07 V2 -->
+  <section id="v2">
+    <div class="sec-head reveal"><span class="sec-num">07</span><div><h2>What V2 should change</h2><p>Ordered by how much accuracy or safety each buys per unit of effort.</p></div></div>
+    <div class="timeline">
+      <div class="phase reveal"><div class="node">1</div><div class="body">
+        <h3>Add sample values and nullability</h3>
+        <p class="goal">Data types are now fed in — the next accuracy lever is showing the model what the columns actually hold.</p>
+        <ul>
+          <li>Add 3–5 distinct sample values per column where you can. <code>status (STRING)</code> is still a guess; <code>status</code> with values <code>A / C / X</code> is nearly solved.</li>
+          <li>Include <code>is_nullable</code> from <code>INFORMATION_SCHEMA.COLUMNS</code>, so an optional flag reads differently from a required key.</li>
+          <li>Extend the prompt's "Respect Data Types" rule to "respect the values too" once they're present.</li>
+        </ul>
+        <div class="exit"><b>Success looks like</b><span>The share of rows tagged <code>low</code> and <code>medium</code> confidence drops sharply.</span></div>
+        <div class="tag-row"><span class="tag">sample values</span><span class="tag">is_nullable</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">2</div><div class="body">
+        <h3>Save incrementally for crash resilience</h3>
+        <p class="goal">Right now the outputs are written once, at the end — a failure on the last batch discards every earlier one.</p>
+        <ul>
+          <li>Write the JSON after each batch returns, so a crash keeps the batches already completed on disk.</li>
+          <li>On startup, load whatever is already there and resume from the first table not yet described.</li>
+        </ul>
+        <div class="exit"><b>Success looks like</b><span>A failure partway through costs the current batch, not the whole run.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">3</div><div class="body">
+        <h3>Pull the schema straight from the warehouse</h3>
+        <p class="goal">Right now the script reads a hand-exported <code>schema.json</code> — the source of truth is a step removed.</p>
+        <ul>
+          <li>Query <code>INFORMATION_SCHEMA.COLUMNS</code> directly and build the same <code>{tables:[...]}</code> shape in code, so there's no manual export to keep fresh.</li>
+          <li>Validate the loaded schema up front — every table has a name, every column a <code>data_type</code> — and fail loudly on a malformed file.</li>
+        </ul>
+        <div class="exit"><b>Success looks like</b><span>Running the script always reflects the live schema, with no stale intermediate file.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">4</div><div class="body">
+        <h3>Add a consistency pass</h3>
+        <p class="goal">Because each table is described on its own, a column repeated across tables can come back worded differently. Make the wording uniform.</p>
+        <ul>
+          <li>Group repeated column names and check the phrasing is parallel where the meaning is the same.</li>
+          <li>Build a small glossary of recurring terms and feed it into the prompt so vocabulary stays stable across batches.</li>
+        </ul>
+        <div class="exit"><b>Success looks like</b><span>The same column reads the same way wherever it appears — one voice, not one per batch.</span></div>
+      </div></div>
+      <div class="phase reveal"><div class="node">5</div><div class="body">
+        <h3>Make re-runs cheap</h3>
+        <p class="goal">Only pay for what changed when the warehouse evolves.</p>
+        <ul>
+          <li>Load the existing output on startup and skip table columns already described.</li>
+          <li>Add a flag to force a refresh of just the low-confidence rows after you've improved the input.</li>
+        </ul>
+        <div class="exit"><b>Success looks like</b><span>Adding one table costs one small batch, not a full re-run.</span></div>
+      </div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap fx">
+    <span class="np">Data Dictionary V1 · <b style="color:var(--ink)">DRAFT</b> — descriptions inferred from names, review before use</span>
+    <span class="np">Companion to the project concepts notes · describes <code>data_dictionary.py</code> as written</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, KEY="orlearn-theme";
+  function systemDark(){return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;}
+  function apply(t){ if(t==="light"||t==="dark"){root.setAttribute("data-theme",t);} else {root.removeAttribute("data-theme");} }
+  var stored=null; try{stored=localStorage.getItem(KEY);}catch(e){}
+  if(stored) apply(stored);
+  var btn=document.getElementById("theme");
+  if(btn){ btn.addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(systemDark()?"dark":"light");
+    var next=cur==="dark"?"light":"dark";
+    apply(next); try{localStorage.setItem(KEY,next);}catch(e){}
+  });}
+
+  var prog=document.getElementById("progress");
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    var p=max>0?(h.scrollTop/max)*100:0;
+    if(prog) prog.style.width=p+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revs=[].slice.call(document.querySelectorAll(".reveal"));
+  if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else{
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target);} });
+    },{rootMargin:"0px 0px -8% 0px",threshold:.08});
+    revs.forEach(function(e){io.observe(e);});
+  }
+
+  var links=[].slice.call(document.querySelectorAll("#toc a"));
+  var map={}; links.forEach(function(a){ var id=a.getAttribute("href").slice(1); map[id]=a; });
+  var secs=[].slice.call(document.querySelectorAll("main section[id]"));
+  if("IntersectionObserver" in window){
+    var so=new IntersectionObserver(function(en){
+      en.forEach(function(x){
+        if(x.isIntersecting){
+          links.forEach(function(l){l.classList.remove("active");});
+          var a=map[x.target.id]; if(a)a.classList.add("active");
+        }
+      });
+    },{rootMargin:"-45% 0px -50% 0px",threshold:0});
+    secs.forEach(function(s){so.observe(s);});
+  }
+
+  var fbtns=[].slice.call(document.querySelectorAll("#ifilters .fbtn"));
+  var rows=[].slice.call(document.querySelectorAll("#itable tbody tr"));
+  fbtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      fbtns.forEach(function(x){x.classList.remove("on");}); b.classList.add("on");
+      var f=b.getAttribute("data-f");
+      rows.forEach(function(r){
+        var show = f==="all" || r.getAttribute("data-s")===f;
+        r.classList.toggle("hide",!show);
+      });
+    });
+  });
+})();
+</script>
