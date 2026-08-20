@@ -5,13 +5,15 @@ Stages:
     2. scripts/metric_catalogue_generator.py -> metric_catalogue/metric_catalogue.json
     3. scripts/sql_generation_simple.py    -> sql/query_<timestamp>.sql
 
-Stage 1 costs many LLM calls, so it is skipped when its output already exists.
-Stage 2 is free and deterministic, so it always runs.
+Stages 1 and 2 are skipped when their output file already exists, so a normal
+run only pays for stage 3. Use the refresh flags to rebuild them.
 
 How to run it:
     python run_pipeline.py
     python run_pipeline.py "Show ARPDAU by country for the last 7 days"
     python run_pipeline.py --refresh-dictionary "Show new payers last week"
+    python run_pipeline.py --refresh-catalogue "Show new payers last week"
+    python run_pipeline.py --refresh-all "Show new payers last week"
 """
 
 import os
@@ -82,9 +84,22 @@ def check_output(path, stage_name):
 
 arguments = sys.argv[1:]
 
+refresh_all = "--refresh-all" in arguments
+if refresh_all:
+    arguments.remove("--refresh-all")
+
 refresh_dictionary = "--refresh-dictionary" in arguments
 if refresh_dictionary:
     arguments.remove("--refresh-dictionary")
+
+refresh_catalogue = "--refresh-catalogue" in arguments
+if refresh_catalogue:
+    arguments.remove("--refresh-catalogue")
+
+# --refresh-all is a shortcut for both of the flags above.
+if refresh_all:
+    refresh_dictionary = True
+    refresh_catalogue = True
 
 # Anything left over is the question. Empty means the SQL script uses its own default.
 if arguments:
@@ -101,6 +116,7 @@ print_header(1, "Data dictionary")
 if os.path.exists(DICT_OUTPUT) and not refresh_dictionary:
     say("Skipped: output/data_dictionary.json already exists.")
     say("Use --refresh-dictionary to rebuild it from the schema export.")
+
 else:
     if not run_script(DICT_SCRIPT):
         say("\nPipeline stopped: the data dictionary stage failed.")
@@ -114,9 +130,13 @@ check_output(DICT_OUTPUT, "data dictionary")
 
 print_header(2, "Metric catalogue")
 
-if not run_script(METRIC_SCRIPT):
-    say("\nPipeline stopped: the metric catalogue stage failed.")
-    sys.exit(1)
+if os.path.exists(METRIC_OUTPUT) and not refresh_catalogue:
+    say("Skipped: metric_catalogue/metric_catalogue.json already exists.")
+    say("Use --refresh-catalogue to rebuild it from the definitions in the script.")
+else:
+    if not run_script(METRIC_SCRIPT):
+        say("\nPipeline stopped: the metric catalogue stage failed.")
+        sys.exit(1)
 
 check_output(METRIC_OUTPUT, "metric catalogue")
 

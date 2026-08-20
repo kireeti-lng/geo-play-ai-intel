@@ -34,7 +34,7 @@ the `openai` SDK pointed at OpenRouter, `load_dotenv(encoding="utf-8-sig")`, `OP
 | Decision | Choice |
 |---|---|
 | Phase 1 | New script in `data_dictionary_v2.py`'s flat OpenRouter style — not a refactor of v2 itself |
-| Phase 2 | Simplify `scripts/sql_generation.py` in place; **static validation only**, no new dependencies |
+| Phase 2 | Simplify `scripts/sql_generation.py` in place; ~~static validation only, no new dependencies~~ — **superseded, see §7: it is now a working main file** |
 | Context strategy | Compact-render everything; no keyword filtering |
 
 ---
@@ -204,3 +204,87 @@ making next.
   behavior-preserving; worth raising separately against the production repo.
 - **`data_dictionary_v2.py` and `scripts/data_dictionary.py` are duplicate files.** Out of scope here, but a
   real maintenance hazard — edits to one will silently diverge from the other.
+
+---
+
+## 7. Phase 2 revised — `sql_generation.py` as a working main file
+
+The original Phase 2 decision was *simplify only, static validation, no new dependencies*. That was
+superseded: the file is now expected to **run**, with minimal changes to the file itself.
+
+### What was added
+
+| Item | Where | Why |
+|---|---|---|
+| `langchain>=1.3,<2`, `langchain-openai>=1.6,<2` | `requirements.txt` | `create_agent` and `ChatOpenAI` |
+| `geoplay/__init__.py`, `config.py`, `tools.py` | **new package** | Supplies the two imports the file already had |
+| `sys.path.append(repo_root)` | 3 lines near the imports | So `geoplay` resolves when run as a script |
+| CLI entry point + `make_slug` / `save_sql` | appended below the class | Makes it runnable and archives output to `sql/` |
+
+The agent class itself is **untouched**. `create_agent` in langchain 1.3.15 takes exactly
+`(model, tools, system_prompt)` — the signature the production code already called — so `__init__`
+needed no edit at all. File went 133 → 214 lines, all of it appended below the class or added to the
+import block.
+
+### The local `geoplay` package
+
+Same module paths as production, so the import lines stay byte-identical:
+
+- **`geoplay.config.get_llm(model_name=None)`** — returns `ChatOpenAI` over OpenRouter,
+  `temperature=0.1`, model from `OPENROUTER_MODEL` then `openai/gpt-5.2`. Mirrors production's
+  `config/runtime.py` minus its internal metering callback.
+- **`geoplay.tools.invoke_data_agent(query)`** — a `@tool`-decorated async function. Production
+  delegates to a BigQuery-backed SQL agent; here it returns this project's own metadata instead:
+  the compact schema (50 tables / 948 columns) plus all 49 metric definitions, 109,325 characters.
+
+That second point is the interesting one. **The production agent has no access to the metric
+catalogue** — its tool returns query results, not definitions. Wiring the catalogue into the tool
+response is the change worth porting upstream.
+
+### A real defect this surfaced
+
+The first successful run emitted `DATEADD(day, -29, CURRENT_DATE())` — SQL Server / Snowflake
+syntax, invalid on BigQuery. Cause: the production system prompt **names no SQL dialect** (verified —
+no occurrence of "bigquery", "dialect", or "standard sql" in its 300 characters). In production that
+is survivable because the real tool delegates to a dialect-aware agent; with a metadata-only tool,
+nothing states the target dialect.
+
+Fixed in the **shim**, not the production prompt — `geoplay/tools.py` declares
+`SQL_DIALECT = "BigQuery standard SQL"` and states it in the tool response. This keeps the prompt
+character-identical (preserving the §3 guarantee) while correcting the output. The tool is the right
+home for it: knowing which warehouse the metadata describes is the tool's job. After the fix the
+same question produced `DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY)` and `SAFE_DIVIDE`.
+
+### Validation
+
+| Check | Result |
+|---|---|
+| `from langchain.agents import create_agent` | imports; accepts `model` / `tools` / `system_prompt` |
+| `NLToSQLAgent()` constructs | `ChatOpenAI(openai/gpt-5.2)` + `CompiledStateGraph` |
+| Behavioural helpers vs pre-refactor original | 50 differential checks, 0 divergences |
+| Wiring vs original (by config, not identity) | 4 checks — llm config, agent type, prompt all identical |
+| System prompt | 300 chars, character-identical |
+| End-to-end run | SQL generated, printed, saved to `sql/` |
+| Generated SQL grounded | 1 real table, 1 CTE, all 6 columns exist in `fact_user_daily` |
+| Dialect correct after fix | `DATE_SUB` / `SAFE_DIVIDE`, no `DATEADD` |
+
+### Two files, two roles
+
+| | `sql_generation_simple.py` | `sql_generation.py` |
+|---|---|---|
+| Architecture | One direct chat call | LangChain agent + tool loop |
+| Context delivery | Injected in the system prompt | Fetched by the agent calling a tool |
+| API calls per question | 1 | 2+ (planner turn, tool turn, answer turn) |
+| Dependencies | `openai`, `python-dotenv` | those + `langchain`, `langchain-openai`, `langgraph` |
+| Matches production | no | yes — same class, prompt, tool interface |
+
+Both now work and both save to `sql/`. The simple one is cheaper and easier to debug; the agent one
+is the shape production actually runs, so it is the one to test changes against before porting them.
+
+### Still true
+
+- **Generated SQL is never executed.** No warehouse connection exists. Column and table names are
+  checked against the data dictionary; semantics are reviewed by reading.
+- **The empty-content bug from §3 is still preserved,** not fixed — behaviour-preserving was the goal.
+- **`run_pipeline.py` still calls `sql_generation_simple.py` for stage 3.** Switching it to the agent
+  version is a one-line change, deliberately not made without asking.

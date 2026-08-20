@@ -1,2 +1,6 @@
 openai>=1.0
 python-dotenv>=1.0
+
+# Needed by scripts/sql_generation.py (the agent version)
+langchain>=1.3,<2
+langchain-openai>=1.6,<2

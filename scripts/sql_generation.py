@@ -1,9 +1,18 @@
 """Dedicated NL-to-SQL agent for downstream dashboard query generation."""
 
+import asyncio
 import json
+import os
 import re
+import sys
+from datetime import datetime
 
 from langchain.agents import create_agent
+
+# Make the repo root importable so `geoplay` resolves when this file is run
+# directly as a script. Appended, not inserted, so a real installed geoplay
+# package would still win.
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from geoplay.config import get_llm
 from geoplay.tools import invoke_data_agent
@@ -131,3 +140,105 @@ class NLToSQLAgent:
         if not sql:
             raise ValueError("Could not extract SQL query from NL-to-SQL agent response")
         return sql
+
+
+# ---------------------------------------------------------------------------
+# COMMAND LINE ENTRY POINT
+# ---------------------------------------------------------------------------
+# Everything above is the agent library, unchanged. The block below lets the
+# file be run directly:
+#
+#     python scripts/sql_generation.py "What is ARPU for the last 30 days?"
+
+SQL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sql")
+
+QUESTION = "Show ARPDAU by country for the last 7 days."
+
+# How many times to send failed checks back for correction before giving up.
+MAX_FIX_ATTEMPTS = 2
+
+STOP_WORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "by", "can", "did", "do", "does",
+    "for", "from", "get", "give", "had", "has", "have", "how", "i", "in", "is",
+    "it", "many", "me", "much", "my", "of", "on", "or", "our", "over", "per",
+    "show", "tell", "that", "the", "their", "there", "this", "to", "us", "was",
+    "we", "were", "what", "when", "where", "which", "who", "why", "with",
+}
+SLUG_MAX_WORDS = 8
+
+
+def make_slug(question):
+    """Turn a question into a short, readable filename part."""
+    cleaned = ""
+    for character in question.lower():
+        if character.isalnum():
+            cleaned = cleaned + character
+        else:
+            cleaned = cleaned + " "
+
+    keep = []
+    for word in cleaned.split():
+        if word not in STOP_WORDS:
+            keep.append(word)
+
+    keep = keep[:SLUG_MAX_WORDS]
+
+    if not keep:
+        return "query"
+
+    return "_".join(keep)
+
+
+def save_sql(sql, question):
+    """Write the query to sql/ and return the path it was written to."""
+    os.makedirs(SQL_DIR, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    path = os.path.join(SQL_DIR, f"{make_slug(question)}_{timestamp}.sql")
+
+    header = f"-- Question: {question}\n-- Generated: {timestamp} by the NL-to-SQL agent\n\n"
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(header + sql + "\n")
+
+    return path
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        question = sys.argv[1]
+    else:
+        question = QUESTION
+
+    print(f"Question: {question}\n")
+
+    agent = NLToSQLAgent()
+    sql = asyncio.run(agent.generate_sql(question))
+
+    # Prompt rules are only a request. These checks read the finished SQL, and
+    # anything they find is sent back to be corrected.
+    from geoplay.rules import GAME_ID
+    from geoplay.validate import build_fix_request, hard_problems, report
+
+    for attempt in range(1, MAX_FIX_ATTEMPTS + 2):
+        problems = hard_problems(sql, GAME_ID)
+        if not problems:
+            break
+        if attempt > MAX_FIX_ATTEMPTS:
+            print(f"Still failing after {MAX_FIX_ATTEMPTS} fix attempts.\n")
+            break
+
+        print(f"Validation failed, asking for a fix (attempt {attempt}):")
+        for name in problems:
+            for problem in problems[name]:
+                print(f"  [{name}] {problem}")
+        print()
+
+        follow_up = question + "\n\n" + build_fix_request(sql, problems)
+        sql = asyncio.run(agent.generate_sql(follow_up))
+
+    print(sql)
+    print()
+    report(sql, GAME_ID)
+
+    print(f"\nSaved to {save_sql(sql, question)}")

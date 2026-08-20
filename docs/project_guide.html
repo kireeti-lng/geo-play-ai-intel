@@ -1,0 +1,885 @@
+<title>Geo-Play AI Intel Project Guide</title>
+<style>
+  :root{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6;
+    --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2;
+    --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    --radius:14px; --radius-sm:9px;
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    --font-mono:Consolas,Monaco,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,ui-monospace,monospace;
+    --measure:70ch;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+      --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+      --line:#232E38; --line-2:#2E3B46;
+      --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+      --ok:#35E0A1; --ok-soft:#0E2A22;
+      --shim:#4FC3F7; --shim-soft:#0E2530;
+      --cap:#E0A94A; --cap-soft:#33280F;
+      --blk:#EB7568; --blk-soft:#331815;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+      --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6; --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2; --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+    --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+    --line:#232E38; --line-2:#2E3B46;
+    --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+    --ok:#35E0A1; --ok-soft:#0E2A22; --shim:#4FC3F7; --shim-soft:#0E2530;
+    --cap:#E0A94A; --cap-soft:#33280F; --blk:#EB7568; --blk-soft:#331815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--font-sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    transition:background .4s ease,color .4s ease;
+  }
+  ::selection{background:var(--accent-soft);color:var(--accent-ink)}
+
+  /* scroll progress */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent);
+    transition:width .12s linear}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+
+  /* ---- top bar ---- */
+  header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--ground) 86%,transparent);
+    backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);transition:background .4s ease,border-color .4s ease}
+  .top .row{display:flex;align-items:center;gap:16px;min-height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;color:var(--ink)}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .brand b{font-weight:600}
+  .brand span{color:var(--muted)}
+  .top nav{margin-left:auto;display:none;gap:4px}
+  @media(min-width:960px){.top nav{display:flex}}
+  .top nav a{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.02em;color:var(--muted);
+    text-decoration:none;padding:6px 9px;border-radius:7px;transition:color .2s,background .2s}
+  .top nav a:hover{color:var(--ink);background:var(--surface-2)}
+  .top nav a.active{color:var(--accent-ink);background:var(--accent-soft)}
+
+  .theme-btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;
+    padding:7px 13px;transition:border-color .2s,transform .2s,background .3s,color .3s}
+  .theme-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .theme-btn svg{width:15px;height:15px}
+  .theme-btn .ico-moon{display:none}
+  :root[data-theme="dark"] .theme-btn .ico-moon{display:block}
+  :root[data-theme="dark"] .theme-btn .ico-sun{display:none}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .theme-btn .ico-moon{display:block}
+    :root:not([data-theme="light"]) .theme-btn .ico-sun{display:none}
+  }
+
+  /* ---- hero ---- */
+  .hero{padding:clamp(46px,8vw,88px) 0 clamp(30px,5vw,52px)}
+  .eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent-ink);display:inline-flex;align-items:center;gap:9px;margin:0 0 18px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.025em;font-weight:800;
+    margin:0 0 20px;text-wrap:balance;max-width:16ch}
+  h1 .grad{background:linear-gradient(96deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--ink-2);max-width:60ch;margin:0 0 26px;line-height:1.55}
+  .meta-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 11px;display:inline-flex;gap:7px;align-items:center}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.draft{color:var(--cap);border-color:color-mix(in srgb,var(--cap) 40%,var(--line));background:var(--cap-soft)}
+
+  /* ---- section scaffold ---- */
+  section{padding:clamp(38px,6vw,66px) 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin:0 0 26px}
+  .sec-num{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);font-weight:600;padding-top:.35em;min-width:2.4em}
+  h2{font-size:clamp(1.5rem,3.2vw,2.05rem);letter-spacing:-.02em;font-weight:750;margin:0;text-wrap:balance;line-height:1.12}
+  .sec-head p{margin:8px 0 0;color:var(--muted);max-width:var(--measure);font-size:1rem}
+  h3{font-size:1.12rem;letter-spacing:-.01em;font-weight:700;margin:30px 0 12px}
+  p{max-width:var(--measure)}
+  a{color:var(--accent-ink);text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px}
+
+  .prose>p{margin:0 0 15px;color:var(--ink-2)}
+
+  /* ---- cards / callouts ---- */
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .cols-4{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .stat .n{font-family:var(--font-mono);font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums}
+  .stat .k{margin-top:9px;font-size:.9rem;color:var(--muted);line-height:1.4}
+
+  .callout{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);background:var(--surface-2);display:flex;gap:14px;align-items:flex-start}
+  .callout .mk{font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+  .callout.key{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}
+  .callout.key .mk{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .callout.key .mk{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .callout.key .mk{color:#04191c}}
+  .callout.warn{background:var(--cap-soft);border-color:color-mix(in srgb,var(--cap) 34%,var(--line))}
+  .callout.warn .mk{background:var(--cap);color:#fff}
+  .callout p{margin:0;color:var(--ink-2);max-width:none}
+
+  /* ---- code ---- */
+  code{font-family:var(--font-mono);font-size:.87em;background:var(--surface-3);padding:.12em .42em;border-radius:5px;color:var(--accent-ink);border:1px solid var(--line)}
+  .code{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:16px 0}
+  .code .bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .code .bar .t{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+  .code .bar .dots{display:flex;gap:6px;margin-right:4px}
+  .code .bar .dots i{width:10px;height:10px;border-radius:50%;background:var(--line-2);display:block}
+  .code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:var(--ink-2)}
+  .code pre .c{color:var(--faint)}
+  .code pre .k{color:var(--accent-ink);font-weight:600}
+  .code pre .s{color:var(--ok)}
+  .copy{position:absolute;top:8px;right:8px;cursor:pointer;font-family:var(--font-mono);font-size:.68rem;
+    color:var(--muted);background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:4px 8px;transition:all .2s}
+  .copy:hover{color:var(--accent-ink);border-color:var(--accent)}
+
+  /* ---- tables ---- */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:640px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface-2);position:sticky;top:0;white-space:nowrap;font-weight:600}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.mono,.mono{font-family:var(--font-mono);font-size:.82rem}
+  td .path{color:var(--accent-ink)}
+  .num-c{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+  /* status pills */
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.02em;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.builtin{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+  .pill.shim{background:var(--shim-soft);color:var(--shim);border-color:color-mix(in srgb,var(--shim) 30%,transparent)}
+  .pill.capability{background:var(--cap-soft);color:var(--cap);border-color:color-mix(in srgb,var(--cap) 30%,transparent)}
+  .pill.config{background:var(--blk-soft);color:var(--blk);border-color:color-mix(in srgb,var(--blk) 30%,transparent)}
+  .pill.layer{background:var(--surface-3);color:var(--muted);border-color:var(--line)}
+
+  /* filter chips */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .fbtn{cursor:pointer;font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;transition:all .2s}
+  .fbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .fbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  :root[data-theme="dark"] .fbtn.on{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fbtn.on{color:#04191c}}
+  tr.hide{display:none}
+
+  /* ---- diagram ---- */
+  figure{margin:8px 0 0}
+  .diagram{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+  .diagram svg{width:100%;min-width:600px;height:auto;color:var(--ink);display:block}
+  .dg-box{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+  .dg-band{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+  .dg-nplus{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+  .dg-t{fill:var(--ink);font-family:var(--font-mono);font-size:13px;font-weight:600}
+  .dg-tm{fill:var(--muted);font-family:var(--font-mono);font-size:11px}
+  .dg-ta{fill:var(--accent-ink);font-family:var(--font-mono);font-size:13px;font-weight:700}
+  .dg-arrow{stroke:var(--muted);stroke-width:1.6;fill:none}
+  .dg-lbl{fill:var(--faint);font-family:var(--font-mono);font-size:10.5px}
+  figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;font-style:italic;max-width:var(--measure)}
+
+  /* ---- timeline ---- */
+  .timeline{position:relative;margin-top:8px}
+  .timeline::before{content:"";position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--accent),var(--line));border-radius:2px}
+  @media(min-width:720px){.timeline::before{left:23px}}
+  .phase{position:relative;padding:0 0 22px 56px}
+  @media(min-width:720px){.phase{padding-left:66px}}
+  .phase .node{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:var(--surface);border:1.6px solid var(--accent);color:var(--accent-ink);font-family:var(--font-mono);font-weight:700;font-size:.86rem;box-shadow:var(--shadow);z-index:1}
+  @media(min-width:720px){.phase .node{width:48px;height:48px}}
+  .phase .body{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .phase .body:hover{transform:translateX(3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .phase h3{margin:0 0 4px;font-size:1.08rem}
+  .phase .goal{color:var(--muted);font-size:.92rem;margin:0 0 13px}
+  .phase ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:.92rem}
+  .phase ul li{margin:5px 0}
+  .phase ul li::marker{color:var(--accent)}
+  .exit{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line-2);font-size:.85rem;color:var(--ink-2);display:flex;gap:9px;align-items:flex-start}
+  .exit b{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ok);white-space:nowrap;margin-top:2px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .tag{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);background:var(--surface-3);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+
+  /* runbook steps */
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .step{display:flex;gap:15px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 18px;box-shadow:var(--shadow);transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateX(3px);border-color:var(--accent)}
+  .step::before{counter-increment:s;content:counter(s);font-family:var(--font-mono);font-weight:700;font-size:.9rem;color:var(--accent-ink);
+    background:var(--accent-soft);border-radius:8px;width:30px;height:30px;display:grid;place-items:center;flex:none}
+  .step div{font-size:.94rem;color:var(--ink-2)}
+  .step div b{color:var(--ink)}
+
+  ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.95rem}
+  ul.clean li .b{color:var(--accent);margin-top:.15em;flex:none}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted)}
+  footer .fx{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  footer .np{font-family:var(--font-mono);font-size:.8rem}
+  footer a{font-weight:600}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+<header class="top">
+  <div class="wrap row">
+    <span class="brand"><span class="dot"></span><b>GEO&#8209;PLAY&nbsp;AI&nbsp;INTEL</b><span>/ project guide</span></span>
+    <nav id="toc">
+      <a href="#overview">Overview</a>
+      <a href="#map">Map</a>
+      <a href="#flow">Flow</a>
+      <a href="#runner">Runner</a>
+      <a href="#stage1">Stage 1</a>
+      <a href="#stage2">Stage 2</a>
+      <a href="#stage3">Stage 3</a>
+      <a href="#support">Support</a>
+      <a href="#reference">Reference</a>
+      <a href="#concepts">Concepts</a>
+      <a href="#runbook">Runbook</a>
+    </nav>
+    <button class="theme-btn" id="theme" aria-label="Toggle colour theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.2 8.2 0 0 1 9.5 4 8.3 8.3 0 1 0 20 14.5Z"/></svg>
+      <span class="lbl">Theme</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow reveal">Project guide · learning reference</p>
+    <h1 class="reveal">Turning a warehouse schema into <span class="grad">trustworthy SQL</span></h1>
+    <p class="lede reveal">This project builds two metadata files describing a mobile-games analytics warehouse, then feeds both to a language model so it writes SQL using real column names and computes metrics with the right denominators. This guide walks every Python file: what it does, how it works, and why it is built that way.</p>
+    <div class="meta-chips reveal">
+      <span class="chip">repo <b>geo-play-ai-intel</b></span>
+      <span class="chip">python <b>3.12.4</b></span>
+      <span class="chip">model <b>openai/gpt-5.2 via OpenRouter</b></span>
+      <span class="chip">scripts <b>8 files</b></span>
+    </div>
+  </div>
+
+  <!-- 01 OVERVIEW -->
+  <section id="overview">
+    <div class="sec-head reveal"><span class="sec-num">01</span><div><h2>What the project does</h2><p>The problem it solves, and how you can tell it is working.</p></div></div>
+
+    <div class="prose reveal">
+      <p>A language model asked to write SQL against a warehouse it has never seen will invent table names and guess at metric formulas. Both failures are silent: the query runs, returns a number, and the number is wrong. This project removes both guesses by giving the model two reference documents before it writes anything.</p>
+    </div>
+
+    <div class="grid cols-3 reveal" style="margin:18px 0">
+      <div class="card stat"><div class="n">50</div><div class="k">warehouse tables described</div></div>
+      <div class="card stat"><div class="n">948</div><div class="k">columns with descriptions</div></div>
+      <div class="card stat"><div class="n">49</div><div class="k">metric definitions</div></div>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">The core idea</span><p>A <b>data dictionary</b> tells the model <i>what exists</i> — which tables and columns are real. A <b>metric catalogue</b> tells the model <i>what things mean</i> — that ARPDAU divides by all daily active users, not just payers. Schema alone cannot carry that second kind of knowledge, which is why the two files are separate artifacts.</p></div>
+
+    <h3>Evidence that it works</h3>
+    <div class="prose reveal">
+      <p>Asked for <span class="mono">ARPDAU by country for the last 7 days</span>, the model produced a per-day aggregate wrapped in an outer <span class="mono">AVG()</span> — the arithmetic mean of daily values. That is exactly what the catalogue definition prescribes, and it is <em>not</em> the naive reading a bare schema would suggest. Asked for D7 retention, it excluded cohorts younger than seven days, matching the definition's maturation rule. Neither behaviour was requested in the question; both came from the catalogue.</p>
+    </div>
+  </section>
+
+  <!-- 02 MAP -->
+  <section id="map">
+    <div class="sec-head reveal"><span class="sec-num">02</span><div><h2>Repository map</h2><p>Eight Python files. Three form the pipeline, one orchestrates them, four are support or reference.</p></div></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Path</th><th>Role</th><th>Reads</th><th>Writes</th><th>Kind</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">run_pipeline.py</td><td>Orchestrator</td><td>—</td><td>—</td><td><span class="pill builtin">runner</span></td></tr>
+          <tr><td class="mono">scripts/data_dictionary.py</td><td>Stage 1 — describe columns</td><td>BigQuery CSV</td><td class="mono">output/data_dictionary.json + .csv</td><td><span class="pill capability">llm</span></td></tr>
+          <tr><td class="mono">scripts/metric_catalogue_generator.py</td><td>Stage 2 — define metrics</td><td>hardcoded data</td><td class="mono">metric_catalogue/metric_catalogue.json</td><td><span class="pill builtin">offline</span></td></tr>
+          <tr><td class="mono">scripts/sql_generation_simple.py</td><td>Stage 3 — write SQL</td><td>both JSON files</td><td class="mono">sql/slug_stamp.sql</td><td><span class="pill capability">llm</span></td></tr>
+          <tr><td class="mono">scripts/json_schema_generator.py</td><td>Schema incl. data types</td><td>BigQuery CSV</td><td class="mono">payload_source/schema.json</td><td><span class="pill shim">support</span></td></tr>
+          <tr><td class="mono">scripts/main.py</td><td>Connection smoke test</td><td>—</td><td>—</td><td><span class="pill shim">support</span></td></tr>
+          <tr><td class="mono">test.py</td><td>Learning sandbox</td><td>inline sample</td><td>—</td><td><span class="pill shim">support</span></td></tr>
+          <tr><td class="mono">scripts/sql_generation.py</td><td>Production reference copy</td><td>—</td><td>—</td><td><span class="pill config">cannot run here</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Folders</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Folder</th><th>Holds</th><th>Created by</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">output/</td><td>Data dictionary, as JSON and CSV</td><td>Stage 1</td></tr>
+          <tr><td class="mono">metric_catalogue/</td><td>Metric catalogue JSON</td><td>Stage 2</td></tr>
+          <tr><td class="mono">sql/</td><td>One .sql file per generated query</td><td>Stage 3</td></tr>
+          <tr><td class="mono">payload_source/</td><td>Schema with BigQuery data types</td><td>json_schema_generator</td></tr>
+          <tr><td class="mono">docs/</td><td>Written documentation, including this page</td><td>by hand</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Careful</span><p><span class="mono">scripts/sql_generation.py</span> is a copy of production code from a different repository. It imports <span class="mono">langchain</span> and a <span class="mono">geoplay</span> package, neither of which exists here, so it cannot run in this project at all. It is reference material — see section 09.</p></div>
+  </section>
+
+  <!-- 03 FLOW -->
+  <section id="flow">
+    <div class="sec-head reveal"><span class="sec-num">03</span><div><h2>How the data flows</h2><p>A straight line with two cacheable stages in front of the one that does the work.</p></div></div>
+
+    <figure class="reveal">
+      <div class="diagram">
+      <svg viewBox="0 0 900 350" role="img" aria-label="Diagram: a BigQuery CSV export feeds the data dictionary stage and hardcoded definitions feed the metric catalogue stage; both resulting JSON files plus the user question feed the SQL generation stage, which writes a dot-sql file.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker>
+          <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent)"/></marker>
+        </defs>
+        <g font-family="Consolas, Monaco, monospace" font-size="12" fill="currentColor">
+
+          <rect x="8" y="26" width="150" height="46" rx="7" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-dasharray="4 3"/>
+          <text x="83" y="45" text-anchor="middle" opacity=".8">BigQuery CSV</text>
+          <text x="83" y="61" text-anchor="middle" opacity=".55" font-size="10">bquxjob_*.csv</text>
+
+          <rect x="8" y="150" width="150" height="46" rx="7" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-dasharray="4 3"/>
+          <text x="83" y="169" text-anchor="middle" opacity=".8">49 definitions</text>
+          <text x="83" y="185" text-anchor="middle" opacity=".55" font-size="10">in the script</text>
+
+          <rect x="8" y="274" width="150" height="46" rx="7" fill="none" stroke="var(--accent)" stroke-opacity=".7"/>
+          <text x="83" y="293" text-anchor="middle" fill="var(--accent)">your question</text>
+          <text x="83" y="309" text-anchor="middle" opacity=".55" font-size="10">argv[1]</text>
+
+          <rect x="232" y="20" width="176" height="58" rx="8" fill="none" stroke="currentColor" stroke-opacity=".7"/>
+          <text x="320" y="43" text-anchor="middle" font-size="11" opacity=".6">STAGE 1</text>
+          <text x="320" y="61" text-anchor="middle">data_dictionary</text>
+
+          <rect x="232" y="144" width="176" height="58" rx="8" fill="none" stroke="currentColor" stroke-opacity=".7"/>
+          <text x="320" y="167" text-anchor="middle" font-size="11" opacity=".6">STAGE 2</text>
+          <text x="320" y="185" text-anchor="middle">metric_catalogue</text>
+
+          <rect x="470" y="20" width="168" height="58" rx="8" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+          <text x="554" y="44" text-anchor="middle" font-size="11" opacity=".6">948 columns</text>
+          <text x="554" y="61" text-anchor="middle" font-size="11">data_dictionary.json</text>
+
+          <rect x="470" y="144" width="168" height="58" rx="8" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+          <text x="554" y="168" text-anchor="middle" font-size="11" opacity=".6">49 metrics</text>
+          <text x="554" y="185" text-anchor="middle" font-size="11">metric_catalogue.json</text>
+
+          <rect x="700" y="140" width="184" height="66" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="792" y="165" text-anchor="middle" font-size="11" fill="var(--accent)" opacity=".85">STAGE 3</text>
+          <text x="792" y="184" text-anchor="middle" fill="var(--accent)">sql_generation</text>
+          <text x="792" y="200" text-anchor="middle" font-size="10" opacity=".6">~27k tokens context</text>
+
+          <rect x="700" y="274" width="184" height="46" rx="7" fill="none" stroke="var(--accent)" stroke-opacity=".7" stroke-dasharray="4 3"/>
+          <text x="792" y="293" text-anchor="middle" fill="var(--accent)">sql/query.sql</text>
+          <text x="792" y="309" text-anchor="middle" opacity=".55" font-size="10">saved and printed</text>
+
+          <g stroke="currentColor" stroke-opacity=".55" fill="none" marker-end="url(#ar)">
+            <path d="M160 49 H228"/><path d="M160 173 H228"/>
+            <path d="M410 49 H466"/><path d="M410 173 H466"/>
+            <path d="M640 49 C674 49 666 148 696 158"/><path d="M640 173 H696"/>
+          </g>
+          <g stroke="var(--accent)" fill="none" marker-end="url(#ara)">
+            <path d="M160 297 C430 297 480 236 696 198"/><path d="M792 210 V270"/>
+          </g>
+
+          <text x="196" y="42" font-size="10" opacity=".55" text-anchor="middle">llm</text>
+          <text x="196" y="166" font-size="10" opacity=".55" text-anchor="middle">pure</text>
+          <text x="672" y="112" font-size="10" opacity=".55">schema</text>
+          <text x="656" y="166" font-size="10" opacity=".55">meaning</text>
+          <text x="436" y="266" font-size="10" fill="var(--accent)" opacity=".85">question</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>Stage 3 is the only stage needing all three inputs. Stages 1 and 2 are independent of each other and of the question — which is exactly why they can be cached and skipped.</figcaption>
+    </figure>
+
+    <h3>Why stage 2 costs nothing</h3>
+    <div class="prose reveal">
+      <p>Stage 1 sends 948 column names to a language model in three batches, so it costs money and takes time. Stage 2 makes no model call at all — the 49 definitions are written into the Python file as data. Running it twice produces a byte-identical file. That difference is worth internalising: <b>generation</b> and <b>curation</b> are different jobs, and only one of them needs an LLM.</p>
+    </div>
+  </section>
+
+  <!-- 04 RUNNER -->
+  <section id="runner">
+    <div class="sec-head reveal"><span class="sec-num">04</span><div><h2>run_pipeline.py — the orchestrator</h2><p>161 lines. Runs the three stages in order, checks each produced its file, stops on first failure. No business logic of its own.</p></div></div>
+
+    <h3>How it launches the stages</h3>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">run_pipeline.py · launching a child stage</span></div>
+      <button class="copy" data-code="command = [sys.executable, script]">Copy</button>
+      <pre><span class="k">def</span> run_script(script, extra_args=<span class="k">None</span>):
+    command = [sys.executable, script]
+    <span class="k">if</span> extra_args:
+        command = command + extra_args
+
+<span class="c">    # cwd is the repo root so every stage sees the same relative paths.</span>
+    result = subprocess.run(command, cwd=REPO_ROOT)
+    <span class="k">return</span> result.returncode == <span class="s">0</span></pre>
+    </div>
+
+    <div class="prose reveal">
+      <p><span class="mono">sys.executable</span> is the full path of the Python interpreter currently running. Using it — rather than the string <span class="mono">"python"</span> — guarantees the child scripts run under the <em>same</em> interpreter as the pipeline. Launch the pipeline from an activated virtual environment and the stages inherit that environment automatically.</p>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">A real failure, and the lesson in it</span><p>This project had an empty <span class="mono">.venv</span>. Running the pipeline from inside it correctly propagated the venv interpreter to stage 3, which then failed with <span class="mono">ModuleNotFoundError: No module named 'dotenv'</span>. The wiring was right; the environment was empty. Fixed with <span class="mono">uv pip install --python .venv/Scripts/python.exe -r requirements.txt</span>. When an import fails, ask <em>which interpreter</em> before you doubt the code.</p></div>
+
+    <h3>The caching rule</h3>
+    <div class="prose reveal"><p>Each metadata stage follows the same pattern: if its output file exists, skip it; a flag forces a rebuild.</p></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Flag</th><th>Effect</th><th>When you need it</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">(none)</td><td>Skip stages 1 and 2 if their files exist</td><td>Normal use</td></tr>
+          <tr><td class="mono">--refresh-dictionary</td><td>Force stage 1 to rebuild</td><td>Warehouse schema changed</td></tr>
+          <tr><td class="mono">--refresh-catalogue</td><td>Force stage 2 to rebuild</td><td>You edited a metric definition</td></tr>
+          <tr><td class="mono">--refresh-all</td><td>Force both</td><td>Rebuilding from scratch</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Why print needs flush=True</span><p>The parent buffers its own output while child processes write straight to the terminal. Without flushing, every stage banner appeared <em>after</em> the output it was meant to label. The <span class="mono">say()</span> helper wraps <span class="mono">print(text, flush=True)</span> to fix the ordering. A classic subprocess gotcha, well worth remembering.</p></div>
+
+    <h3>Guarding each stage</h3>
+    <div class="prose reveal">
+      <p>After every stage, <span class="mono">check_output()</span> confirms the expected file now exists and exits with status 1 if not. A stage that exits 0 but writes nothing would otherwise be reported as success, and stage 3 would fail later with a confusing error. Failing at the true source of the problem is worth four extra lines.</p>
+    </div>
+  </section>
+
+  <!-- 05 STAGE 1 -->
+  <section id="stage1">
+    <div class="sec-head reveal"><span class="sec-num">05</span><div><h2>Stage 1 — data_dictionary.py</h2><p>138 lines. Reads a BigQuery schema export and asks a model for one business description per column. The expensive stage.</p></div></div>
+
+    <div class="grid cols-3 reveal" style="margin:18px 0">
+      <div class="card stat"><div class="n">3</div><div class="k">LLM calls — 50 tables in batches of 20</div></div>
+      <div class="card stat"><div class="n">948</div><div class="k">descriptions produced</div></div>
+      <div class="card stat"><div class="n">2</div><div class="k">output formats — JSON and CSV</div></div>
+    </div>
+
+    <h3>Step by step</h3>
+    <div class="steps reveal">
+      <div class="step"><div><b>Load config.</b> <span class="mono">load_dotenv()</span> runs first, so the CSV path can come from <span class="mono">BQ_EXPORT_CSV</span> in <span class="mono">.env</span>, falling back to a hardcoded default.</div></div>
+      <div class="step"><div><b>Guard the input.</b> If the CSV is missing, print a clear message and <span class="mono">sys.exit(1)</span> instead of raising a traceback.</div></div>
+      <div class="step"><div><b>Read and group.</b> <span class="mono">csv.DictReader</span> walks the rows; <span class="mono">defaultdict(set)</span> groups columns under their table and drops duplicates in one step.</div></div>
+      <div class="step"><div><b>Sort.</b> Tables and columns are sorted so batching is deterministic and reruns are comparable.</div></div>
+      <div class="step"><div><b>Batch.</b> <span class="mono">chunk_dict()</span> yields 20 tables at a time, keeping each prompt small enough to stay reliable.</div></div>
+      <div class="step"><div><b>Ask the model</b> with <span class="mono">response_format={"type": "json_object"}</span>, which forces valid JSON back.</div></div>
+      <div class="step"><div><b>Write both outputs</b> — JSON for machines, CSV for reading in a spreadsheet.</div></div>
+    </div>
+
+    <h3>The grouping trick, unpacked</h3>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">scripts/data_dictionary.py · grouping</span></div>
+      <button class="copy" data-code="table_groups = defaultdict(set)">Copy</button>
+      <pre>table_groups = defaultdict(<span class="k">set</span>)
+<span class="k">with</span> <span class="k">open</span>(CSV_PATH, newline=<span class="s">""</span>, encoding=<span class="s">"utf-8-sig"</span>) <span class="k">as</span> f:
+    <span class="k">for</span> row <span class="k">in</span> csv.DictReader(f):
+        table = row[<span class="s">"table_name"</span>].strip()
+        column = row[<span class="s">"column_name"</span>].strip()
+        <span class="k">if</span> table <span class="k">and</span> column:
+            table_groups[table].add(column)</pre>
+    </div>
+
+    <div class="prose reveal">
+      <p>Three things happen at once here. <span class="mono">defaultdict(set)</span> means you never check whether a key exists before adding to it. Using a <span class="mono">set</span> rather than a list makes duplicate columns disappear for free. And <span class="mono">encoding="utf-8-sig"</span> strips the byte-order mark that Excel and BigQuery exports often put at the start of a CSV — without it the first column name arrives with invisible junk attached.</p>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Where this stage is fragile</span><p>Descriptions are model output, so they are plausible rather than authoritative. Each row carries a <span class="mono">confidence</span> field for that reason. In the current file: <b>848 high, 98 medium, 2 low</b>. The low and medium rows are the ones worth reading by hand.</p></div>
+  </section>
+
+  <!-- 06 STAGE 2 -->
+  <section id="stage2">
+    <div class="sec-head reveal"><span class="sec-num">06</span><div><h2>Stage 2 — metric_catalogue_generator.py</h2><p>447 lines, almost all of it data rather than logic. No model call, no network, no randomness.</p></div></div>
+
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">scripts/metric_catalogue_generator.py</span></div>
+      <button class="copy" data-code="METRICS = [(metric_id, metric_name, definition), ...]">Copy</button>
+      <pre><span class="c"># (metric_id, metric_name, definition)</span>
+METRICS = [
+    (
+        <span class="s">"ad_arpdau"</span>,
+        <span class="s">"Ad ARPDAU"</span>,
+        <span class="s">"Ad ARPDAU is the quotient of gross advertising revenue "</span>
+        <span class="s">"recognized on a given day and the count of daily active "</span>
+        <span class="s">"users on that same day..."</span>,
+    ),
+<span class="c">    # ... 48 more</span>
+]
+
+metrics = [
+    {<span class="s">"metric_id"</span>: metric_id, <span class="s">"metric_name"</span>: metric_name, <span class="s">"definition"</span>: definition}
+    <span class="k">for</span> metric_id, metric_name, definition <span class="k">in</span> METRICS
+]</pre>
+    </div>
+
+    <h3>Two Python details worth noticing</h3>
+    <div class="prose reveal">
+      <p><b>Implicit string concatenation.</b> Adjacent string literals with no operator between them are joined by Python at parse time. That is how a long definition wraps across several lines without <span class="mono">+</span> signs or backslashes.</p>
+      <p><b>Tuple unpacking in a comprehension.</b> The <span class="mono">for metric_id, metric_name, definition in METRICS</span> line pulls all three values out of each tuple in one move, which is why the dictionary above it reads so plainly.</p>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Why the IDs are typed by hand</span><p>It would be tempting to derive <span class="mono">metric_id</span> from <span class="mono">metric_name</span> automatically. Four names break a naive slug function: <span class="mono">Ad eCPM (USD)</span>, <span class="mono">Stickiness (DAU/MAU)</span>, <span class="mono">Transactions / Paying User</span>, <span class="mono">Total Revenue (IAP+Ad)</span>. Writing the IDs out keeps the script simple and the IDs stable. Simple beats clever when the input set is small and fixed.</p></div>
+
+    <h3>What makes the definitions useful</h3>
+    <div class="prose reveal"><p>Every definition names its numerator and denominator explicitly, and near-identical metrics are deliberately distinguished rather than left vague:</p></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Pair</th><th>What separates them</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ARPU vs ARPPU</td><td>All active users vs payers only in the denominator</td></tr>
+          <tr><td class="mono">Ad ARPU vs Ad ARPDAU</td><td>Period-unique users vs per-day normalisation</td></tr>
+          <tr><td class="mono">Crash Rate vs ANR Rate</td><td>Process termination vs main-thread hang; never summed</td></tr>
+          <tr><td class="mono">Tutorial Completion vs FTUE Drop-off</td><td>Tutorial starters vs the wider onboarding path</td></tr>
+          <tr><td class="mono">Tournament Participation vs Completion</td><td>Eligible users vs entrants as the denominator</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>This is the part that makes stage 3 accurate. A schema listing can say <span class="mono">revenue_iap_usd</span> exists; only a definition can say which users belong in the denominator when you divide by it.</p>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Edit the script, not the JSON</span><p>The JSON file is generated output. Editing it directly works until the next run of stage 2 overwrites your change. Edit <span class="mono">METRICS</span> in the script, then run with <span class="mono">--refresh-catalogue</span> — without that flag the stage skips and your edit never reaches the JSON.</p></div>
+  </section>
+
+  <!-- 07 STAGE 3 -->
+  <section id="stage3">
+    <div class="sec-head reveal"><span class="sec-num">07</span><div><h2>Stage 3 — sql_generation_simple.py</h2><p>243 lines. Loads both metadata files, renders them into a prompt, asks for one query, prints and saves it. The file that does the actual job.</p></div></div>
+
+    <h3>Pipeline inside the script</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Function</th><th>Takes</th><th>Returns</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">load_json</td><td>path</td><td>dict</td><td>Read a file, or exit with a clear message</td></tr>
+          <tr><td class="mono">group_columns_by_table</td><td>column list</td><td>dict of lists</td><td>Flat rows become table groups</td></tr>
+          <tr><td class="mono">build_schema_text</td><td>column list</td><td>str</td><td>Render tables and columns as prompt lines</td></tr>
+          <tr><td class="mono">build_metric_text</td><td>metric list</td><td>str</td><td>Render definitions as prompt lines</td></tr>
+          <tr><td class="mono">build_system_prompt</td><td>both texts</td><td>str</td><td>Assemble rules plus both context blocks</td></tr>
+          <tr><td class="mono">clean_sql</td><td>model reply</td><td>str</td><td>Strip code fences, normalise the semicolon</td></tr>
+          <tr><td class="mono">make_slug</td><td>question</td><td>str</td><td>Build a readable filename part</td></tr>
+          <tr><td class="mono">generate_sql</td><td>client, question, prompt</td><td>str</td><td>The one API call</td></tr>
+          <tr><td class="mono">save_sql</td><td>sql, question</td><td>path</td><td>Write the .sql file</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>The context budget</h3>
+    <div class="prose reveal"><p>Sending raw JSON would cost roughly 57,000 tokens per question. Rendering it as compact lines roughly halves that:</p></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Block</th><th>Characters</th><th>Approx. tokens</th></tr></thead>
+        <tbody>
+          <tr><td>Schema — 50 tables, 948 columns</td><td class="mono">88,914</td><td class="mono">~22,200</td></tr>
+          <tr><td>Metrics — 49 definitions</td><td class="mono">20,324</td><td class="mono">~5,100</td></tr>
+          <tr><td><b>Combined</b></td><td class="mono"><b>109,238</b></td><td class="mono"><b>~27,300</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>Everything is sent every time, with no filtering by keyword. That is a deliberate trade: keyword filtering would be cheaper, but a missed keyword would silently starve the model of the one table it needed — a hard failure to debug. Predictability was chosen over cost.</p>
+    </div>
+
+    <h3>The prompt rules</h3>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">system prompt · the rules block</span></div>
+      <button class="copy" data-code="Use only the tables and columns listed under AVAILABLE TABLES. Do not invent names.">Copy</button>
+      <pre>Rules:
+<span class="k">-</span> Use only the tables and columns listed under AVAILABLE TABLES. Do not invent names.
+<span class="k">-</span> If the question names a metric from METRIC DEFINITIONS, compute it exactly as the
+  definition states, using the numerator and denominator it specifies.
+<span class="k">-</span> Return only the SQL query. No explanation, no markdown, no code fences.</pre>
+    </div>
+    <div class="prose reveal"><p>The second rule is the load-bearing one. It is what turns the catalogue from decoration into behaviour.</p></div>
+
+    <h3>Paths anchored to the file, not the folder</h3>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">scripts/sql_generation_simple.py · path resolution</span></div>
+      <button class="copy" data-code="REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))">Copy</button>
+      <pre>REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+METRIC_PATH = os.path.join(REPO_ROOT, <span class="s">"metric_catalogue"</span>, <span class="s">"metric_catalogue.json"</span>)</pre>
+    </div>
+    <div class="prose reveal">
+      <p>Read it inside out: <span class="mono">__file__</span> is this script's path, <span class="mono">abspath</span> makes it absolute, and two <span class="mono">dirname</span> calls climb from the file to <span class="mono">scripts/</span> to the repo root. The result is that the script finds its data no matter which folder you run it from. A plain relative path such as <span class="mono">"output/data_dictionary.json"</span> would only work when the current folder happened to be the repo root.</p>
+    </div>
+
+    <h3>Naming the saved file</h3>
+    <div class="prose reveal"><p><span class="mono">make_slug()</span> lowercases the question, replaces every non-alphanumeric character with a space, drops filler words from a <span class="mono">STOP_WORDS</span> set, and keeps the first eight words:</p></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Question</th><th>Filename slug</th></tr></thead>
+        <tbody>
+          <tr><td>What is ARPU for the last 30 days?</td><td class="mono">arpu_last_30_days</td></tr>
+          <tr><td>How many sessions per DAU did we have yesterday?</td><td class="mono">sessions_dau_yesterday</td></tr>
+          <tr><td>What is the Ad eCPM (USD) trend?</td><td class="mono">ad_ecpm_usd_trend</td></tr>
+          <tr><td>Transactions / Paying User last week</td><td class="mono">transactions_paying_user_last_week</td></tr>
+          <tr><td>(empty or all filler)</td><td class="mono">query</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>Stripping to alphanumerics also removes characters Windows forbids in filenames, so the slash in <span class="mono">Transactions / Paying User</span> causes no trouble. A timestamp is appended so re-asking the same question never overwrites the earlier answer.</p>
+    </div>
+  </section>
+
+  <!-- 08 SUPPORT -->
+  <section id="support">
+    <div class="sec-head reveal"><span class="sec-num">08</span><div><h2>Supporting scripts</h2><p>Three files the pipeline never calls, each useful for a different reason.</p></div></div>
+
+    <h3>scripts/json_schema_generator.py</h3>
+    <div class="prose reveal">
+      <p>42 lines, no LLM. Reads the same BigQuery CSV and writes <span class="mono">payload_source/schema.json</span> — 50 tables with each column's <b>data type</b>. Where the data dictionary answers <i>what does this column mean</i>, this answers <i>what type is it</i>. Stage 3 does not currently use it, but type information is what you would add to stop the model comparing a string to a date.</p>
+    </div>
+
+    <h3>scripts/main.py</h3>
+    <div class="prose reveal">
+      <p>69 lines. A smoke test: sends one tiny prompt and prints the reply plus token counts. Run it first whenever something breaks, to separate <i>my key or model is wrong</i> from <i>my pipeline is wrong</i>. It is how the model change to <span class="mono">openai/gpt-5.2</span> was confirmed working.</p>
+    </div>
+
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">python scripts/main.py · expected output</span></div>
+      <button class="copy" data-code="python scripts/main.py">Copy</button>
+      <pre>model:  openai/gpt-5.2
+reply:  <span class="s">connection ok</span>
+tokens: 12 in / 16 out</pre>
+    </div>
+
+    <h3>test.py</h3>
+    <div class="prose reveal">
+      <p>125 lines. A scaled-down twin of stage 1 that uses four made-up tables defined inline instead of the real CSV, and prints results instead of writing files. Useful for learning the batching pattern without spending tokens on 948 columns. Its <span class="mono">BATCH_SIZE</span> is 2 so you can watch the loop actually loop.</p>
+    </div>
+  </section>
+
+  <!-- 09 REFERENCE -->
+  <section id="reference">
+    <div class="sec-head reveal"><span class="sec-num">09</span><div><h2>sql_generation.py — the reference copy</h2><p>133 lines, and the most misleading file in the repo. Read it to understand production; do not expect it to run.</p></div></div>
+
+    <div class="prose reveal">
+      <p>It is a copy of <span class="mono">src/geoplay/agents/nl_to_sql_agent.py</span> from a separate production repository.</p>
+    </div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th></th><th>sql_generation_simple.py</th><th>sql_generation.py</th></tr></thead>
+        <tbody>
+          <tr><td>Origin</td><td>Written for this repo</td><td>Copied from another repo</td></tr>
+          <tr><td>Context source</td><td>Reads both JSON files</td><td>A tool call at runtime</td></tr>
+          <tr><td>LLM access</td><td class="mono">openai</td><td class="mono">langchain</td></tr>
+          <tr><td>Shape</td><td>Flat functions, synchronous</td><td>Class, <span class="mono">async</span></td></tr>
+          <tr><td>Entry point</td><td>Command line</td><td>Imported as a library</td></tr>
+          <tr><td>Runs here</td><td><span class="pill builtin">yes</span></td><td><span class="pill config">no</span></td></tr>
+          <tr><td>Uses the metric catalogue</td><td><span class="pill builtin">yes</span></td><td><span class="pill config">no</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>It was simplified in place — type annotations removed, static methods lifted to module functions, a bare <span class="mono">except Exception</span> narrowed to <span class="mono">json.JSONDecodeError</span> — while keeping its public surface and its system prompt character-identical. 57 differential checks against the original confirmed identical behaviour.</p>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">A bug deliberately preserved</span><p>When the agent returns a message with empty content, the response extractor falls through and stringifies the whole result dictionary, so the intended <span class="mono">ValueError</span> never fires and garbage is returned as SQL. This exists in the original and was left alone, because the goal was behaviour-preserving simplification. Knowing the difference between <i>fixing</i> and <i>refactoring</i> matters: doing both at once makes it impossible to tell which change caused a new failure.</p></div>
+  </section>
+
+  <!-- 10 CONCEPTS -->
+  <section id="concepts">
+    <div class="sec-head reveal"><span class="sec-num">10</span><div><h2>Python concepts to take away</h2><p>Every item below appears in this codebase. Reading them in place beats reading them in a tutorial.</p></div></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Concept</th><th>Where</th><th>What it buys you</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">defaultdict(set)</td><td>data_dictionary</td><td>Group and de-duplicate without existence checks</td></tr>
+          <tr><td class="mono">csv.DictReader</td><td>data_dictionary, json_schema_generator</td><td>Rows as dictionaries keyed by header</td></tr>
+          <tr><td class="mono">encoding="utf-8-sig"</td><td>both CSV readers</td><td>Strips the byte-order mark Excel adds</td></tr>
+          <tr><td class="mono">yield</td><td class="mono">chunk_dict</td><td>Produce batches lazily instead of building a list</td></tr>
+          <tr><td class="mono">islice</td><td class="mono">chunk_dict</td><td>Take N items from any iterator</td></tr>
+          <tr><td>Walrus <span class="mono">:=</span></td><td class="mono">chunk_dict</td><td>Assign and test in one expression</td></tr>
+          <tr><td>Implicit string joining</td><td>metric_catalogue_generator</td><td>Wrap long text with no operators</td></tr>
+          <tr><td>Tuple unpacking</td><td>metric_catalogue_generator</td><td>Read three fields per row cleanly</td></tr>
+          <tr><td class="mono">__file__</td><td>stages 1 and 3</td><td>Locate data relative to the script, not the shell</td></tr>
+          <tr><td class="mono">sys.exit(1)</td><td>all guards</td><td>Signal failure so a runner can react</td></tr>
+          <tr><td class="mono">sys.executable</td><td>run_pipeline</td><td>Reuse the current interpreter for children</td></tr>
+          <tr><td class="mono">subprocess.run</td><td>run_pipeline</td><td>Run another script and read its exit code</td></tr>
+          <tr><td class="mono">print(flush=True)</td><td>run_pipeline</td><td>Keep parent and child output in order</td></tr>
+          <tr><td class="mono">f-strings</td><td>everywhere</td><td>Readable interpolation, including in prompts</td></tr>
+          <tr><td class="mono">response_format</td><td>stage 1</td><td>Force the model to return valid JSON</td></tr>
+          <tr><td class="mono">os.environ.get</td><td>config blocks</td><td>Optional settings with a fallback</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">The shape every script here shares</span><p>Constants at the top, functions in the middle, a flat run of statements at the bottom. No classes unless something genuinely needs state. You can read any file top to bottom and know what happens, in order — which is exactly why they are easy to debug.</p></div>
+  </section>
+
+  <!-- 11 RUNBOOK -->
+  <section id="runbook">
+    <div class="sec-head reveal"><span class="sec-num">11</span><div><h2>Runbook</h2><p>Setup, everyday commands, configuration, and what to check when something breaks.</p></div></div>
+
+    <h3>First-time setup</h3>
+    <div class="steps reveal">
+      <div class="step"><div><b>Install dependencies</b> into the virtual environment: <span class="mono">uv pip install --python .venv/Scripts/python.exe -r requirements.txt</span></div></div>
+      <div class="step"><div><b>Activate it:</b> <span class="mono">.\.venv\Scripts\Activate.ps1</span></div></div>
+      <div class="step"><div><b>Confirm the connection:</b> <span class="mono">python scripts/main.py</span> should print <span class="mono">connection ok</span></div></div>
+    </div>
+
+    <h3>Everyday use</h3>
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">PowerShell · from the repo root</span></div>
+      <button class="copy" data-code="python run_pipeline.py &quot;What is ARPU for the last 30 days?&quot;">Copy</button>
+      <pre><span class="c"># normal run: stages 1 and 2 skipped, only stage 3 runs</span>
+python run_pipeline.py <span class="s">"What is ARPU for the last 30 days?"</span>
+
+<span class="c"># after editing a metric definition</span>
+python run_pipeline.py --refresh-catalogue <span class="s">"What is ARPU for the last 30 days?"</span>
+
+<span class="c"># skip the runner, go straight to SQL generation</span>
+python scripts/sql_generation_simple.py <span class="s">"What is ARPU for the last 30 days?"</span></pre>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Name the metric in your question</span><p>"Total revenue generated per user" describes ARPU but does not name it, and it is ambiguous between ARPU and ARPPU — two real metrics with different denominators. Saying <span class="mono">ARPU</span> outright gets the catalogue definition applied and produces a tighter filename.</p></div>
+
+    <h3>Configuration</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Setting</th><th>Where</th><th>Required</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">OPENROUTER_API_KEY</td><td class="mono">.env</td><td><span class="pill config">yes</span></td><td>Stages 1 and 3 fail without it</td></tr>
+          <tr><td class="mono">BQ_EXPORT_CSV</td><td class="mono">.env</td><td><span class="pill shim">optional</span></td><td>Stage 1 input; falls back to a hardcoded path</td></tr>
+          <tr><td class="mono">OPENROUTER_MODEL</td><td class="mono">.env</td><td><span class="pill shim">inert</span></td><td>Present but read by nothing — each script hardcodes MODEL</td></tr>
+          <tr><td class="mono">MODEL</td><td>each script</td><td><span class="pill config">yes</span></td><td>Currently <span class="mono">openai/gpt-5.2</span> in all four</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Troubleshooting</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">ModuleNotFoundError: dotenv</td><td>Interpreter has no packages</td><td>Install into that venv; check <span class="mono">sys.executable</span></td></tr>
+          <tr><td class="mono">is not a valid model ID</td><td>MODEL is not on OpenRouter</td><td>Check the live model list; note the <span class="mono">openai/</span> prefix</td></tr>
+          <tr><td class="mono">Missing schema export CSV</td><td>Stage 1 input absent</td><td>Set <span class="mono">BQ_EXPORT_CSV</span></td></tr>
+          <tr><td>Edited definition has no effect</td><td>Stage 2 was skipped</td><td>Add <span class="mono">--refresh-catalogue</span></td></tr>
+          <tr><td>SQL names an unknown column</td><td>Dictionary is stale</td><td>Run with <span class="mono">--refresh-dictionary</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Two known limitations</span><p><b>Generated SQL is never executed.</b> No warehouse connection exists in this project, so a query can be syntactically valid and still be wrong. Read it before you trust it.</p><p><b>The dialect is assumed.</b> <span class="mono">SQL_DIALECT</span> is set to BigQuery because the source CSV is a BigQuery export. If the warehouse is something else, change that one constant.</p></div>
+
+    <div class="prose reveal" style="margin-top:26px">
+      <p>Companion document: <span class="mono">docs/nl_to_sql_simplification_plan.md</span> records the two-phase refactor, the differential test results, and the assumptions behind them.</p>
+    </div>
+  </section>
+
+</main>
+<script>
+(function(){
+  var root=document.documentElement, KEY="wa-portability-theme";
+  function systemDark(){return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;}
+  function apply(t){ if(t==="light"||t==="dark"){root.setAttribute("data-theme",t);} else {root.removeAttribute("data-theme");} }
+  var stored=null; try{stored=localStorage.getItem(KEY);}catch(e){}
+  if(stored) apply(stored);
+  var btn=document.getElementById("theme");
+  if(btn){ btn.addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(systemDark()?"dark":"light");
+    var next=cur==="dark"?"light":"dark";
+    apply(next); try{localStorage.setItem(KEY,next);}catch(e){}
+  });}
+
+  // scroll progress
+  var prog=document.getElementById("progress");
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    var p=max>0?(h.scrollTop/max)*100:0;
+    if(prog) prog.style.width=p+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+
+  // reveal on scroll
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revs=[].slice.call(document.querySelectorAll(".reveal"));
+  if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else{
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target);} });
+    },{rootMargin:"0px 0px -8% 0px",threshold:.08});
+    revs.forEach(function(e){io.observe(e);});
+  }
+
+  // scrollspy TOC
+  var links=[].slice.call(document.querySelectorAll("#toc a"));
+  var map={}; links.forEach(function(a){ var id=a.getAttribute("href").slice(1); map[id]=a; });
+  var secs=[].slice.call(document.querySelectorAll("main section[id]"));
+  if("IntersectionObserver" in window){
+    var so=new IntersectionObserver(function(en){
+      en.forEach(function(x){
+        if(x.isIntersecting){
+          links.forEach(function(l){l.classList.remove("active");});
+          var a=map[x.target.id]; if(a)a.classList.add("active");
+        }
+      });
+    },{rootMargin:"-45% 0px -50% 0px",threshold:0});
+    secs.forEach(function(s){so.observe(s);});
+  }
+
+  // interface table filter
+  var fbtns=[].slice.call(document.querySelectorAll("#ifilters .fbtn"));
+  var rows=[].slice.call(document.querySelectorAll("#itable tbody tr"));
+  fbtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      fbtns.forEach(function(x){x.classList.remove("on");}); b.classList.add("on");
+      var f=b.getAttribute("data-f");
+      rows.forEach(function(r){
+        var show = f==="all" || r.getAttribute("data-s")===f;
+        r.classList.toggle("hide",!show);
+      });
+    });
+  });
+
+  // copy buttons
+  [].slice.call(document.querySelectorAll(".copy")).forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=b.getAttribute("data-code")||"";
+      try{ navigator.clipboard.writeText(t).then(function(){ var o=b.textContent; b.textContent="Copied ✓"; setTimeout(function(){b.textContent=o;},1400); }); }catch(e){}
+    });
+  });
+})();
+</script>
