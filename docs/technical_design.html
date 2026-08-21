@@ -1,0 +1,814 @@
+<title>Geo-Play AI Intel Technical Design</title>
+<style>
+  :root{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6;
+    --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2;
+    --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    --radius:14px; --radius-sm:9px;
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    --font-mono:Consolas,Monaco,"Cascadia Code","SF Mono","Segoe UI Mono",Menlo,ui-monospace,monospace;
+    --measure:70ch;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+      --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+      --line:#232E38; --line-2:#2E3B46;
+      --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+      --ok:#35E0A1; --ok-soft:#0E2A22;
+      --shim:#4FC3F7; --shim-soft:#0E2530;
+      --cap:#E0A94A; --cap-soft:#33280F;
+      --blk:#EB7568; --blk-soft:#331815;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+      --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#EEF3F1; --surface:#FFFFFF; --surface-2:#F3F8F5; --surface-3:#E7F1EC;
+    --ink:#131C17; --ink-2:#33403A; --muted:#5D6B64; --faint:#8A968F;
+    --line:#D9E3DE; --line-2:#C6D3CC;
+    --accent:#0E9E6E; --accent-2:#12B07D; --accent-ink:#0A7A54; --accent-soft:#D6F1E6;
+    --ok:#0E9E6E; --ok-soft:#D6F1E6; --shim:#0E7FA6; --shim-soft:#D7ECF6;
+    --cap:#A76B08; --cap-soft:#F5E9D2; --blk:#B84438; --blk-soft:#F6DEDA;
+    --shadow:0 1px 2px rgba(20,30,42,.04),0 6px 24px rgba(20,30,42,.06);
+    --shadow-lg:0 2px 6px rgba(20,30,42,.06),0 18px 48px rgba(20,30,42,.12);
+    color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1218; --surface:#141B22; --surface-2:#171F27; --surface-3:#1E2831;
+    --ink:#E9EFF4; --ink-2:#C2CDD6; --muted:#8B97A4; --faint:#63707C;
+    --line:#232E38; --line-2:#2E3B46;
+    --accent:#35E0A1; --accent-2:#57E9B4; --accent-ink:#6FEBBE; --accent-soft:#0E2A22;
+    --ok:#35E0A1; --ok-soft:#0E2A22; --shim:#4FC3F7; --shim-soft:#0E2530;
+    --cap:#E0A94A; --cap-soft:#33280F; --blk:#EB7568; --blk-soft:#331815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.34);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.36),0 20px 52px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--font-sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    transition:background .4s ease,color .4s ease;
+  }
+  ::selection{background:var(--accent-soft);color:var(--accent-ink)}
+
+  /* scroll progress */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent);
+    transition:width .12s linear}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+
+  /* ---- top bar ---- */
+  header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--ground) 86%,transparent);
+    backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);transition:background .4s ease,border-color .4s ease}
+  .top .row{display:flex;align-items:center;gap:16px;min-height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;color:var(--ink)}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .brand b{font-weight:600}
+  .brand span{color:var(--muted)}
+  .top nav{margin-left:auto;display:none;gap:4px}
+  @media(min-width:960px){.top nav{display:flex}}
+  .top nav a{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.02em;color:var(--muted);
+    text-decoration:none;padding:6px 9px;border-radius:7px;transition:color .2s,background .2s}
+  .top nav a:hover{color:var(--ink);background:var(--surface-2)}
+  .top nav a.active{color:var(--accent-ink);background:var(--accent-soft)}
+
+  .theme-btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink);background:var(--surface);border:1px solid var(--line-2);border-radius:999px;
+    padding:7px 13px;transition:border-color .2s,transform .2s,background .3s,color .3s}
+  .theme-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .theme-btn svg{width:15px;height:15px}
+  .theme-btn .ico-moon{display:none}
+  :root[data-theme="dark"] .theme-btn .ico-moon{display:block}
+  :root[data-theme="dark"] .theme-btn .ico-sun{display:none}
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .theme-btn .ico-moon{display:block}
+    :root:not([data-theme="light"]) .theme-btn .ico-sun{display:none}
+  }
+
+  /* ---- hero ---- */
+  .hero{padding:clamp(46px,8vw,88px) 0 clamp(30px,5vw,52px)}
+  .eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent-ink);display:inline-flex;align-items:center;gap:9px;margin:0 0 18px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-size:clamp(2.1rem,5.4vw,3.5rem);line-height:1.04;letter-spacing:-.025em;font-weight:800;
+    margin:0 0 20px;text-wrap:balance;max-width:16ch}
+  h1 .grad{background:linear-gradient(96deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(1.05rem,2vw,1.28rem);color:var(--ink-2);max-width:60ch;margin:0 0 26px;line-height:1.55}
+  .meta-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 11px;display:inline-flex;gap:7px;align-items:center}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.draft{color:var(--cap);border-color:color-mix(in srgb,var(--cap) 40%,var(--line));background:var(--cap-soft)}
+
+  /* ---- section scaffold ---- */
+  section{padding:clamp(38px,6vw,66px) 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin:0 0 26px}
+  .sec-num{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);font-weight:600;padding-top:.35em;min-width:2.4em}
+  h2{font-size:clamp(1.5rem,3.2vw,2.05rem);letter-spacing:-.02em;font-weight:750;margin:0;text-wrap:balance;line-height:1.12}
+  .sec-head p{margin:8px 0 0;color:var(--muted);max-width:var(--measure);font-size:1rem}
+  h3{font-size:1.12rem;letter-spacing:-.01em;font-weight:700;margin:30px 0 12px}
+  p{max-width:var(--measure)}
+  a{color:var(--accent-ink);text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px}
+
+  .prose>p{margin:0 0 15px;color:var(--ink-2)}
+
+  /* ---- cards / callouts ---- */
+  .grid{display:grid;gap:16px}
+  .cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .cols-3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .cols-4{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .stat .n{font-family:var(--font-mono);font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums}
+  .stat .k{margin-top:9px;font-size:.9rem;color:var(--muted);line-height:1.4}
+
+  .callout{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);background:var(--surface-2);display:flex;gap:14px;align-items:flex-start}
+  .callout .mk{font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+  .callout.key{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}
+  .callout.key .mk{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .callout.key .mk{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .callout.key .mk{color:#04191c}}
+  .callout.warn{background:var(--cap-soft);border-color:color-mix(in srgb,var(--cap) 34%,var(--line))}
+  .callout.warn .mk{background:var(--cap);color:#fff}
+  .callout p{margin:0;color:var(--ink-2);max-width:none}
+
+  /* ---- code ---- */
+  code{font-family:var(--font-mono);font-size:.87em;background:var(--surface-3);padding:.12em .42em;border-radius:5px;color:var(--accent-ink);border:1px solid var(--line)}
+  .code{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:16px 0}
+  .code .bar{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .code .bar .t{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+  .code .bar .dots{display:flex;gap:6px;margin-right:4px}
+  .code .bar .dots i{width:10px;height:10px;border-radius:50%;background:var(--line-2);display:block}
+  .code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:var(--ink-2)}
+  .code pre .c{color:var(--faint)}
+  .code pre .k{color:var(--accent-ink);font-weight:600}
+  .code pre .s{color:var(--ok)}
+  .copy{position:absolute;top:8px;right:8px;cursor:pointer;font-family:var(--font-mono);font-size:.68rem;
+    color:var(--muted);background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:4px 8px;transition:all .2s}
+  .copy:hover{color:var(--accent-ink);border-color:var(--accent)}
+
+  /* ---- tables ---- */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:640px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+    background:var(--surface-2);position:sticky;top:0;white-space:nowrap;font-weight:600}
+  tbody tr{transition:background .15s}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.mono,.mono{font-family:var(--font-mono);font-size:.82rem}
+  td .path{color:var(--accent-ink)}
+  .num-c{font-variant-numeric:tabular-nums;color:var(--muted)}
+
+  /* status pills */
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.02em;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.builtin{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+  .pill.shim{background:var(--shim-soft);color:var(--shim);border-color:color-mix(in srgb,var(--shim) 30%,transparent)}
+  .pill.capability{background:var(--cap-soft);color:var(--cap);border-color:color-mix(in srgb,var(--cap) 30%,transparent)}
+  .pill.config{background:var(--blk-soft);color:var(--blk);border-color:color-mix(in srgb,var(--blk) 30%,transparent)}
+  .pill.layer{background:var(--surface-3);color:var(--muted);border-color:var(--line)}
+
+  /* filter chips */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .fbtn{cursor:pointer;font-family:var(--font-mono);font-size:.73rem;letter-spacing:.02em;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:6px 13px;transition:all .2s}
+  .fbtn:hover{border-color:var(--accent);color:var(--ink)}
+  .fbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  :root[data-theme="dark"] .fbtn.on{color:#04191c}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fbtn.on{color:#04191c}}
+  tr.hide{display:none}
+
+  /* ---- diagram ---- */
+  figure{margin:8px 0 0}
+  .diagram{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+  .diagram svg{width:100%;min-width:600px;height:auto;color:var(--ink);display:block}
+  .dg-box{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+  .dg-band{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+  .dg-nplus{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+  .dg-t{fill:var(--ink);font-family:var(--font-mono);font-size:13px;font-weight:600}
+  .dg-tm{fill:var(--muted);font-family:var(--font-mono);font-size:11px}
+  .dg-ta{fill:var(--accent-ink);font-family:var(--font-mono);font-size:13px;font-weight:700}
+  .dg-arrow{stroke:var(--muted);stroke-width:1.6;fill:none}
+  .dg-lbl{fill:var(--faint);font-family:var(--font-mono);font-size:10.5px}
+  figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;font-style:italic;max-width:var(--measure)}
+
+  /* ---- timeline ---- */
+  .timeline{position:relative;margin-top:8px}
+  .timeline::before{content:"";position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--accent),var(--line));border-radius:2px}
+  @media(min-width:720px){.timeline::before{left:23px}}
+  .phase{position:relative;padding:0 0 22px 56px}
+  @media(min-width:720px){.phase{padding-left:66px}}
+  .phase .node{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:var(--surface);border:1.6px solid var(--accent);color:var(--accent-ink);font-family:var(--font-mono);font-weight:700;font-size:.86rem;box-shadow:var(--shadow);z-index:1}
+  @media(min-width:720px){.phase .node{width:48px;height:48px}}
+  .phase .body{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s}
+  .phase .body:hover{transform:translateX(3px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+  .phase h3{margin:0 0 4px;font-size:1.08rem}
+  .phase .goal{color:var(--muted);font-size:.92rem;margin:0 0 13px}
+  .phase ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:.92rem}
+  .phase ul li{margin:5px 0}
+  .phase ul li::marker{color:var(--accent)}
+  .exit{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line-2);font-size:.85rem;color:var(--ink-2);display:flex;gap:9px;align-items:flex-start}
+  .exit b{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ok);white-space:nowrap;margin-top:2px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .tag{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);background:var(--surface-3);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+
+  /* runbook steps */
+  .steps{counter-reset:s;display:grid;gap:12px}
+  .step{display:flex;gap:15px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 18px;box-shadow:var(--shadow);transition:transform .25s,border-color .25s}
+  .step:hover{transform:translateX(3px);border-color:var(--accent)}
+  .step::before{counter-increment:s;content:counter(s);font-family:var(--font-mono);font-weight:700;font-size:.9rem;color:var(--accent-ink);
+    background:var(--accent-soft);border-radius:8px;width:30px;height:30px;display:grid;place-items:center;flex:none}
+  .step div{font-size:.94rem;color:var(--ink-2)}
+  .step div b{color:var(--ink)}
+
+  ul.clean{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.95rem}
+  ul.clean li .b{color:var(--accent);margin-top:.15em;flex:none}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted)}
+  footer .fx{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  footer .np{font-family:var(--font-mono);font-size:.8rem}
+  footer a{font-weight:600}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+<header class="top">
+  <div class="wrap row">
+    <span class="brand"><span class="dot"></span><b>GEO&#8209;PLAY&nbsp;AI&nbsp;INTEL</b><span>/ technical design</span></span>
+    <nav id="toc">
+      <a href="#business">Business</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#modules">Modules</a>
+      <a href="#config">config</a>
+      <a href="#rules">rules</a>
+      <a href="#tools">tools</a>
+      <a href="#validate">validate</a>
+      <a href="#scripts">Scripts</a>
+      <a href="#artifacts">Artifacts</a>
+      <a href="#deps">Dependencies</a>
+      <a href="#limits">Limits</a>
+    </nav>
+    <button class="theme-btn" id="theme" aria-label="Toggle colour theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.6M19.4 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8.2 8.2 0 0 1 9.5 4 8.3 8.3 0 1 0 20 14.5Z"/></svg>
+      <span class="lbl">Theme</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <p class="eyebrow reveal">Technical design document</p>
+    <h1 class="reveal">Natural language to <span class="grad">trustworthy SQL</span>, over a governed games warehouse</h1>
+    <p class="lede reveal">A metadata-driven NL-to-SQL pipeline. It describes a 50-table BigQuery warehouse, defines 49 business metrics, and feeds both to a language model together with a rule set and a deterministic validator, so the SQL it writes uses real columns and computes each metric with the denominator its definition specifies.</p>
+    <div class="meta-chips reveal">
+      <span class="chip">repo <b>geo-play-ai-intel</b></span>
+      <span class="chip">python <b>3.12.4</b></span>
+      <span class="chip">model <b>openai/gpt-5.2 · OpenRouter</b></span>
+      <span class="chip">modules <b>5 geoplay + 7 scripts</b></span>
+      <span class="chip">warehouse <b>BigQuery · 50 tables · 948 columns</b></span>
+    </div>
+  </div>
+
+  <section id="business">
+    <div class="sec-head reveal"><span class="sec-num">01</span><div><h2>Business case</h2><p>Why a metadata layer exists between the question and the query.</p></div></div>
+
+    <div class="prose reveal">
+      <p>Game teams ask analytics questions in words — <i>"what is ARPU for the last 30 days"</i>, <i>"D7 retention by country"</i> — and wait on an analyst to write SQL. The obvious shortcut is to hand the question to a language model. Done naively that fails in two ways, and <b>both fail silently</b>: the model invents table and column names, and it guesses metric formulas. The query runs, returns a number, and the number is wrong. Nobody can tell by looking at the output.</p>
+      <p>This project removes both guesses before generation, then verifies the result after it.</p>
+    </div>
+
+    <div class="grid cols-3 reveal" style="margin:18px 0">
+      <div class="card stat"><div class="n">50</div><div class="k">warehouse tables described</div></div>
+      <div class="card stat"><div class="n">948</div><div class="k">columns with business descriptions</div></div>
+      <div class="card stat"><div class="n">49</div><div class="k">metric definitions with explicit denominators</div></div>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">The core idea</span><p>A <b>data dictionary</b> tells the model <i>what exists</i>. A <b>metric catalogue</b> tells it <i>what things mean</i> — that ARPU divides by all active users while ARPPU divides by payers only. A <b>rule set</b> tells it how to build a query safely. A <b>validator</b> then checks what it actually wrote. Schema alone carries none of the last three.</p></div>
+
+    <h3>Who this serves</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Consumer</th><th>Need</th><th>What the pipeline gives them</th></tr></thead>
+        <tbody>
+          <tr><td>Game / product teams</td><td>An answer without waiting on an analyst</td><td>Readable SQL they can hand to a runner</td></tr>
+          <tr><td>Analysts</td><td>A first draft that respects metric definitions</td><td>Denominators already pinned to the catalogue</td></tr>
+          <tr><td>Data platform</td><td>Queries that do not blend tenants or scan whole tables</td><td>Tenant grouping and partition-pruning rules, enforced by checks</td></tr>
+          <tr><td>The production NL-to-SQL agent</td><td>A place to test prompt and rule changes</td><td>A local twin sharing the production class and interface</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Evidence it works</h3>
+    <div class="prose reveal">
+      <p>Asked for ARPDAU over seven days, the model wrapped a per-day aggregate in an outer <span class="mono">AVG()</span> — the arithmetic mean of daily values, exactly as the catalogue definition prescribes, and not the naive reading a bare schema suggests. Asked for D7 retention, it excluded cohorts younger than seven days. Neither behaviour was in the question; both came from the definitions.</p>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="sec-head reveal"><span class="sec-num">02</span><div><h2>Architecture</h2><p>Three build stages produce metadata; one generation stage consumes it; a validator closes the loop.</p></div></div>
+
+    <figure class="reveal">
+      <div class="diagram">
+      <svg viewBox="0 0 920 430" role="img" aria-label="Architecture: a BigQuery schema export and hardcoded metric definitions are turned into two JSON artifacts. Those plus the shared rule set feed the SQL generation stage, whose output passes through a deterministic validator that either saves the query or sends the failures back for correction.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="var(--accent)"/></marker>
+        </defs>
+        <g font-family="Consolas, Monaco, monospace" font-size="11.5" fill="currentColor">
+
+          <text x="8" y="16" font-size="10" opacity=".5">INPUTS</text>
+          <rect x="8" y="26" width="140" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-dasharray="4 3"/>
+          <text x="78" y="43" text-anchor="middle" opacity=".8">BigQuery CSV</text>
+          <text x="78" y="58" text-anchor="middle" opacity=".5" font-size="9.5">bquxjob_*.csv</text>
+
+          <rect x="8" y="140" width="140" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-dasharray="4 3"/>
+          <text x="78" y="157" text-anchor="middle" opacity=".8">49 definitions</text>
+          <text x="78" y="172" text-anchor="middle" opacity=".5" font-size="9.5">authored, in code</text>
+
+          <text x="200" y="16" font-size="10" opacity=".5">BUILD STAGES</text>
+          <rect x="200" y="26" width="164" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".7"/>
+          <text x="282" y="43" text-anchor="middle">data_dictionary</text>
+          <text x="282" y="58" text-anchor="middle" opacity=".5" font-size="9.5">3 LLM calls, batched</text>
+
+          <rect x="200" y="140" width="164" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".7"/>
+          <text x="282" y="157" text-anchor="middle">metric_catalogue</text>
+          <text x="282" y="172" text-anchor="middle" opacity=".5" font-size="9.5">offline, deterministic</text>
+
+          <text x="410" y="16" font-size="10" opacity=".5">ARTIFACTS</text>
+          <rect x="410" y="26" width="160" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+          <text x="490" y="43" text-anchor="middle" font-size="10.5">data_dictionary.json</text>
+          <text x="490" y="58" text-anchor="middle" opacity=".5" font-size="9.5">50 tables / 948 cols</text>
+
+          <rect x="410" y="140" width="160" height="42" rx="7" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+          <text x="490" y="157" text-anchor="middle" font-size="10.5">metric_catalogue.json</text>
+          <text x="490" y="172" text-anchor="middle" opacity=".5" font-size="9.5">49 metrics</text>
+
+          <rect x="410" y="252" width="160" height="42" rx="7" fill="none" stroke="var(--accent)" stroke-opacity=".55"/>
+          <text x="490" y="269" text-anchor="middle" fill="var(--accent)" font-size="10.5">geoplay/rules.py</text>
+          <text x="490" y="284" text-anchor="middle" opacity=".5" font-size="9.5">10 sections</text>
+
+          <rect x="8" y="252" width="140" height="42" rx="7" fill="none" stroke="var(--accent)" stroke-opacity=".7"/>
+          <text x="78" y="269" text-anchor="middle" fill="var(--accent)">question</text>
+          <text x="78" y="284" text-anchor="middle" opacity=".5" font-size="9.5">argv[1]</text>
+
+          <text x="620" y="16" font-size="10" opacity=".5">GENERATE</text>
+          <rect x="620" y="120" width="170" height="62" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="705" y="143" text-anchor="middle" fill="var(--accent)">sql_generation</text>
+          <text x="705" y="159" text-anchor="middle" opacity=".55" font-size="9.5">agent or simple</text>
+          <text x="705" y="173" text-anchor="middle" opacity=".55" font-size="9.5">~118k char context</text>
+
+          <rect x="620" y="252" width="170" height="52" rx="8" fill="none" stroke="currentColor" stroke-opacity=".7"/>
+          <text x="705" y="272" text-anchor="middle">validate.py</text>
+          <text x="705" y="288" text-anchor="middle" opacity=".55" font-size="9.5">9 checks</text>
+
+          <rect x="620" y="360" width="170" height="42" rx="7" fill="none" stroke="var(--accent)" stroke-opacity=".7" stroke-dasharray="4 3"/>
+          <text x="705" y="377" text-anchor="middle" fill="var(--accent)">sql/&lt;slug&gt;.sql</text>
+          <text x="705" y="392" text-anchor="middle" opacity=".5" font-size="9.5">saved + printed</text>
+
+          <g stroke="currentColor" stroke-opacity=".5" fill="none" marker-end="url(#a1)">
+            <path d="M150 47 H196"/><path d="M150 161 H196"/>
+            <path d="M366 47 H406"/><path d="M366 161 H406"/>
+            <path d="M572 47 C600 47 596 128 616 138"/>
+            <path d="M572 161 H616"/>
+          </g>
+          <g stroke="var(--accent)" stroke-opacity=".8" fill="none" marker-end="url(#a2)">
+            <path d="M572 273 C596 273 600 190 616 175"/>
+            <path d="M150 273 H406"/>
+            <path d="M705 186 V248"/>
+            <path d="M705 308 V356"/>
+          </g>
+          <path d="M792 278 C846 278 846 150 792 150" stroke="var(--accent)" stroke-opacity=".8" fill="none" stroke-dasharray="5 4" marker-end="url(#a2)"/>
+          <text x="806" y="216" font-size="9.5" fill="var(--accent)" opacity=".85">retry</text>
+          <text x="806" y="230" font-size="9.5" opacity=".5">max 2</text>
+
+          <text x="176" y="40" font-size="9.5" opacity=".5" text-anchor="middle">llm</text>
+          <text x="176" y="154" font-size="9.5" opacity=".5" text-anchor="middle">pure</text>
+          <text x="596" y="106" font-size="9.5" opacity=".5">schema</text>
+          <text x="580" y="155" font-size="9.5" opacity=".5">meaning</text>
+          <text x="586" y="240" font-size="9.5" opacity=".5">rules</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>Stages 1 and 2 are cached: they are skipped when their artifact already exists, so a normal run pays for generation only. The dashed accent path is the retry loop — the validator's findings are sent back as a correction request, up to twice.</figcaption>
+    </figure>
+
+    <h3>Two generation paths, one rule set</h3>
+    <div class="prose reveal">
+      <p>There are deliberately two generators. <span class="mono">sql_generation_simple.py</span> makes one direct chat call. <span class="mono">sql_generation.py</span> is a copy of the production LangChain agent and reaches its context through a tool call. Both import the same <span class="mono">geoplay/rules.py</span> and the same <span class="mono">geoplay/validate.py</span>, so a rule or check change lands on both at once.</p>
+    </div>
+
+    <div class="code reveal">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">how the shared rules reach each generator</span></div>
+      <button class="copy" data-code="rules.py -> build_rules() -> both generators">Copy</button>
+      <pre>rules.py ── build_rules() ─────────────────► sql_generation_simple.py   (<span class="k">system prompt</span>)
+         │
+         └► tools.py ── build_rules() + build_context() + build_reminder()
+                                     └─────► sql_generation.py          (<span class="k">tool response</span>)</pre>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">A positional gotcha</span><p>The agent receives the rules inside a tool response followed by ~109,000 characters of schema, so by the time it finishes reading the table list the rules are 109k characters behind it. That measurably changed which tables it chose. <span class="mono">build_reminder()</span> exists for exactly this: 666 characters restating the load-bearing rules, appended <b>after</b> the schema so they are the last thing read.</p></div>
+  </section>
+
+  <section id="modules">
+    <div class="sec-head reveal"><span class="sec-num">03</span><div><h2>Module map</h2><p>Twelve Python files: five in the <span class="mono">geoplay</span> package, seven scripts.</p></div></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>File</th><th>Lines</th><th>Purpose</th><th>Used by</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">geoplay/rules.py</td><td class="mono">219</td><td>The SQL rule set, single source of truth</td><td>both generators</td></tr>
+          <tr><td class="mono">geoplay/validate.py</td><td class="mono">309</td><td>Deterministic checks on generated SQL</td><td>both generators</td></tr>
+          <tr><td class="mono">geoplay/config.py</td><td class="mono">31</td><td>LangChain chat model over OpenRouter</td><td>agent only</td></tr>
+          <tr><td class="mono">geoplay/tools.py</td><td class="mono">81</td><td>The tool the agent calls for context</td><td>agent only</td></tr>
+          <tr><td class="mono">geoplay/__init__.py</td><td class="mono">6</td><td>Package marker</td><td>both</td></tr>
+          <tr><td class="mono">run_pipeline.py</td><td class="mono">161</td><td>Orchestrates the three stages in order</td><td>entry point</td></tr>
+          <tr><td class="mono">scripts/data_dictionary.py</td><td class="mono">138</td><td>Stage 1 — describe every column</td><td>pipeline</td></tr>
+          <tr><td class="mono">scripts/metric_catalogue_generator.py</td><td class="mono">447</td><td>Stage 2 — emit 49 metric definitions</td><td>pipeline</td></tr>
+          <tr><td class="mono">scripts/sql_generation_simple.py</td><td class="mono">275</td><td>Stage 3 — direct chat generation</td><td>pipeline / CLI</td></tr>
+          <tr><td class="mono">scripts/sql_generation.py</td><td class="mono">244</td><td>Stage 3 — production agent twin</td><td>CLI</td></tr>
+          <tr><td class="mono">scripts/json_schema_generator.py</td><td class="mono">42</td><td>Schema with BigQuery data types</td><td>standalone</td></tr>
+          <tr><td class="mono">scripts/main.py</td><td class="mono">69</td><td>Connection smoke test</td><td>standalone</td></tr>
+          <tr><td class="mono">test.py</td><td class="mono">125</td><td>Learning sandbox for the batching pattern</td><td>standalone</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="config">
+    <div class="sec-head reveal"><span class="sec-num">04</span><div><h2>geoplay/config.py</h2><p>One job: hand back a configured chat model. 31 lines.</p></div></div>
+
+    <div class="prose reveal">
+      <p><b>What it achieves.</b> It is the single place that knows how to reach the LLM provider. Nothing else in the agent path constructs a client, so the model, the endpoint and the temperature are changed in one file.</p>
+      <p><b>Where it is used.</b> <span class="mono">sql_generation.py</span> calls <span class="mono">get_llm()</span> in its constructor, and LangChain's <span class="mono">create_agent</span> takes the result as its <span class="mono">model</span>. The simple script never touches it — it builds a plain <span class="mono">OpenAI</span> client inline instead, which is what keeps it free of the LangChain dependency tree.</p>
+      <p><b>Why it exists at all.</b> It mirrors the production <span class="mono">geoplay.config</span> module path exactly, so the import line in the production agent file needed no edit. That fidelity is the point: a change reviewed here is a copy-paste into production.</p>
+    </div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Function</th><th>Returns</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">get_llm(model_name=None)</td><td class="mono">ChatOpenAI</td><td>Resolves the model from the argument, then <span class="mono">OPENROUTER_MODEL</span>, then <span class="mono">DEFAULT_MODEL</span>. Points at the OpenRouter base URL with <span class="mono">temperature=0.1</span>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Deliberate omission</span><p>Production's <span class="mono">get_llm</span> also attaches a token-metering callback from <span class="mono">geoplay.tokens</span>. That is internal to the other repository and is left out here. Everything else — the base URL, the temperature, the model fallback chain — matches.</p></div>
+  </section>
+
+  <section id="rules">
+    <div class="sec-head reveal"><span class="sec-num">05</span><div><h2>geoplay/rules.py</h2><p>The behavioural contract for every generated query. 219 lines, 10 sections, ~7,900 characters of prompt text.</p></div></div>
+
+    <div class="prose reveal">
+      <p><b>What it achieves.</b> It converts hard-won corrections into standing instructions. Every rule in it exists because a real generated query got something wrong — a wrong denominator, an invented date range, a guessed string literal, a full table scan. It is the accumulated memory of those failures.</p>
+      <p><b>Where it is used.</b> Both generators. The simple script embeds <span class="mono">build_rules()</span> in its system prompt; the agent gets it through <span class="mono">tools.py</span>. Sharing one module is what stops the two drifting apart — an early version of this project had separate prompts, and a rule added to one silently did not apply to the other.</p>
+      <p><b>Why pure standard library.</b> It imports only <span class="mono">os</span> and <span class="mono">dotenv</span>. If it imported anything from LangChain, the simple script would inherit ~30 transitive packages it does not need.</p>
+    </div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Section</th><th>Governs</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">APPROACH</td><td>The method: settle the question, read the definition, find columns that already hold the inputs, judge on correct / simple / effective, re-read the question before returning</td></tr>
+          <tr><td class="mono">CHOOSING THE TABLE</td><td>One table where possible; purpose-built tables; business-named columns over a generic <span class="mono">metric_id</span> shape</td></tr>
+          <tr><td class="mono">OUTPUT SHAPE</td><td>Final SELECT aligns exactly with the request; window columns for period aggregates and none for time series; one row per named period</td></tr>
+          <tr><td class="mono">TIME RANGE</td><td>Never invent a range; resolve partial dates; require every named month present; range predicates on raw date columns</td></tr>
+          <tr><td class="mono">AGGREGATION SAFETY</td><td>Never SUM ratios or daily distinct counts; compute period ratios at daily grain; never approximate one metric from another</td></tr>
+          <tr><td class="mono">COUNTING AND JOINS</td><td>Fan-out protection; <span class="mono">COUNT(DISTINCT …)</span> over <span class="mono">COUNT(*)</span>; reduce versioned dimensions before joining</td></tr>
+          <tr><td class="mono">NUMERATOR AND DENOMINATOR</td><td>Eligibility filters constrain the denominator only; NULL-safe booleans</td></tr>
+          <tr><td class="mono">COLUMN VALUES ARE UNKNOWN</td><td>Names and descriptions are given, values are not — never invent a literal to compare against</td></tr>
+          <tr><td class="mono">CORRECTNESS</td><td>Real names only; compute per the definition; <span class="mono">SAFE_DIVIDE</span>; BigQuery dialect</td></tr>
+          <tr><td class="mono">TENANT SCOPE</td><td>Never blend tenants; resolve any discovered date <b>per tenant</b>, never once globally</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Functional surface</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Name</th><th>Kind</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">BASE_RULES</td><td>template</td><td>The ten sections, with <span class="mono">{timezone}</span> and <span class="mono">{dialect}</span> placeholders</td></tr>
+          <tr><td class="mono">build_rules()</td><td>function</td><td>Fills the template and appends the tenant block, which differs depending on whether <span class="mono">GAME_ID</span> is set</td></tr>
+          <tr><td class="mono">build_reminder()</td><td>function</td><td>666 characters restating the six most-dropped rules, for repeating after a long schema</td></tr>
+          <tr><td class="mono">GAME_ID</td><td>config</td><td>From <span class="mono">.env</span>. Set: filter every table to it. Blank: GROUP BY the tenant columns instead</td></tr>
+          <tr><td class="mono">TENANT_COLUMNS</td><td>config</td><td><span class="mono">org_id, game_id, game_client_id</span></td></tr>
+          <tr><td class="mono">REPORTING_TIMEZONE</td><td>config</td><td><span class="mono">UTC</span> — stated because <span class="mono">CURRENT_DATE()</span> defaults to it and retention definitions assume a declared zone</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">The tenant rule is conditional by design</span><p>With <span class="mono">GAME_ID</span> blank the rule does not simply relax — it flips to requiring <span class="mono">GROUP BY org_id, game_id, game_client_id</span>. Either way a result can never silently blend two games. That was the largest correctness hole found in this project: 43 of the 50 tables carry <span class="mono">game_id</span>, and early queries filtered on none of them.</p></div>
+  </section>
+
+  <section id="tools">
+    <div class="sec-head reveal"><span class="sec-num">06</span><div><h2>geoplay/tools.py</h2><p>The agent's window onto the warehouse. 81 lines.</p></div></div>
+
+    <div class="prose reveal">
+      <p><b>What it achieves.</b> It supplies the one tool the production agent is allowed to call, <span class="mono">invoke_data_agent</span>. In production that tool delegates to a BigQuery-backed SQL agent. Here it returns this project's own metadata instead — the rules, the compact schema, the metric definitions, and the reminder — assembled into a single message.</p>
+      <p><b>Where it is used.</b> <span class="mono">sql_generation.py</span> passes it to <span class="mono">create_agent(tools=[invoke_data_agent])</span>. The simple script does not use it; it loads the same two JSON files itself.</p>
+      <p><b>Why it matters architecturally.</b> This is the seam between the local twin and production. Keeping the module path and the tool name identical means the production agent file imports unchanged, so what is exercised here is the real interface rather than an approximation.</p>
+    </div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Function</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">load_json(path)</td><td>Read one artifact from disk</td></tr>
+          <tr><td class="mono">build_schema_text(columns)</td><td>Render 948 columns as <span class="mono">TABLE x</span> / <span class="mono">- col: description</span> lines — about half the tokens of raw JSON</td></tr>
+          <tr><td class="mono">build_metric_text(metrics)</td><td>Render 49 definitions as <span class="mono">name: definition</span> lines</td></tr>
+          <tr><td class="mono">build_context()</td><td>Both blocks under <span class="mono">AVAILABLE TABLES</span> and <span class="mono">METRIC DEFINITIONS</span> headers — 109,325 characters</td></tr>
+          <tr><td class="mono">invoke_data_agent(query)</td><td>The <span class="mono">@tool</span>. Returns question + rules + context + reminder, 117,938 characters</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Ordering is load-bearing</span><p>The reminder is appended last on purpose. Everything before it is buried behind the schema listing, and which rules the model actually followed changed measurably when the reminder moved to the end. This is the only geoplay module that imports <span class="mono">langchain_core</span>, which is what keeps the LangChain dependency on the agent side of the line.</p></div>
+  </section>
+
+  <section id="validate">
+    <div class="sec-head reveal"><span class="sec-num">07</span><div><h2>geoplay/validate.py</h2><p>Rules are a request. Checks are not. 309 lines, 9 checks, no warehouse required.</p></div></div>
+
+    <div class="prose reveal">
+      <p><b>What it achieves.</b> It reads the finished SQL as text and reports what the query actually did, independently of what the prompt asked for. This is the half of the system that does not depend on the model complying.</p>
+      <p><b>Where it is used.</b> Both generators, at the end of every run. Its findings drive the retry loop: failures are fed back as a correction request, up to <span class="mono">MAX_FIX_ATTEMPTS = 2</span>, then the run reports that it gave up rather than pretending.</p>
+    </div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Check</th><th>Catches</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">tables</td><td>Tables absent from the data dictionary</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">columns</td><td>Column-like names that exist nowhere</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">dialect</td><td><span class="mono">DATEADD</span>, <span class="mono">GETDATE</span>, <span class="mono">NVL</span>, <span class="mono">TO_CHAR</span> …</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">game filter</td><td>Missing <span class="mono">game_id =</span> when <span class="mono">GAME_ID</span> is set</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">window columns</td><td>Missing <span class="mono">first_date</span> / <span class="mono">last_date</span> / <span class="mono">days_with_data</span> on a period aggregate</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">summed ratios</td><td><span class="mono">SUM(arpu_usd)</span> and similar</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">fan-out count</td><td><span class="mono">COUNT(*)</span> aliased as a distinct-entity count when the query joins on that entity</td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">pruning</td><td><span class="mono">EXTRACT()</span> or <span class="mono">DATE_TRUNC()</span> on a date column inside <span class="mono">WHERE</span> or <span class="mono">ON</span></td><td><span class="pill config">hard</span></td></tr>
+          <tr><td class="mono">review</td><td>String literals compared against a column — every one is a guess</td><td><span class="pill shim">informational</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Functional surface</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Function</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">validate(sql, game_id)</td><td>Run every check, return <span class="mono">{check: [problems]}</span> for failures only</td></tr>
+          <tr><td class="mono">hard_problems(sql, game_id)</td><td>The same, minus the informational ones — this is what gates a retry</td></tr>
+          <tr><td class="mono">build_fix_request(sql, problems)</td><td>Compose the correction message, quoting the exact findings</td></tr>
+          <tr><td class="mono">report(sql, game_id)</td><td>Print the outcome; returns True when everything passed</td></tr>
+          <tr><td class="mono">is_time_series(sql)</td><td>Decide whether window columns are required at all</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Why "review" is not a failure</span><p>The pipeline is given column names and descriptions but never values or sample rows, so any literal such as <span class="mono">ad_event_type = 'impression'</span> is a guess — and a wrong guess returns zero rows with no error. Those are surfaced for a human to confirm rather than treated as defects; making them hard failures would burn retries trying to fix something that is not broken.</p></div>
+
+    <div class="callout warn reveal"><span class="mk">Honest limitation</span><p>These are regular expressions over SQL text, not a parser. They catch <b>invalid</b> SQL, not <b>wrong</b> SQL. A <span class="mono">COUNT(*)</span> that understated a metric by half, a globally-resolved reference year that silently dropped tenants, and an eligibility filter wrongly applied to a numerator were all found by reading queries, not by a check. Four of the ten rule sections still have no check at all.</p></div>
+  </section>
+
+  <section id="scripts">
+    <div class="sec-head reveal"><span class="sec-num">08</span><div><h2>The scripts</h2><p>What each entry point is for.</p></div></div>
+
+    <h3>run_pipeline.py — orchestrator</h3>
+    <div class="prose reveal">
+      <p>Runs the three stages in order, verifies each produced its artifact, and stops on the first failure with a clear message and exit code 1. Contains no business logic. Launches children with <span class="mono">sys.executable</span> so they inherit the same interpreter, and skips stages 1 and 2 when their output already exists — <span class="mono">--refresh-dictionary</span>, <span class="mono">--refresh-catalogue</span> and <span class="mono">--refresh-all</span> force a rebuild.</p>
+    </div>
+
+    <h3>scripts/data_dictionary.py — stage 1</h3>
+    <div class="prose reveal">
+      <p>Reads a BigQuery schema export and asks the model for one business description per column, 20 tables at a time, with <span class="mono">response_format={"type": "json_object"}</span> forcing valid JSON back. Writes both JSON and CSV. The expensive stage: three LLM calls for 948 columns. Each row carries a <span class="mono">confidence</span> field because the descriptions are model output — currently 848 high, 98 medium, 2 low.</p>
+    </div>
+
+    <h3>scripts/metric_catalogue_generator.py — stage 2</h3>
+    <div class="prose reveal">
+      <p>447 lines, almost all data. The 49 definitions live in the file as a list of tuples and are written straight to JSON. No LLM call, no network, no randomness — running it twice produces a byte-identical file. Its value is that each definition names its numerator and denominator explicitly and distinguishes near-identical metrics: ARPU against ARPPU, Crash Rate against ANR Rate, Tournament Participation against Completion.</p>
+    </div>
+
+    <h3>scripts/sql_generation_simple.py — stage 3, direct</h3>
+    <div class="prose reveal">
+      <p>One chat call. Loads both artifacts, renders them with the shared rules into a system prompt, cleans the reply, validates, retries on failure, prints and saves. Flat module-level functions and two <span class="mono">if</span> guards — deliberately readable. Paths anchor to <span class="mono">__file__</span> so it runs from any directory.</p>
+    </div>
+
+    <h3>scripts/sql_generation.py — stage 3, agent</h3>
+    <div class="prose reveal">
+      <p>The production <span class="mono">NLToSQLAgent</span> class, unchanged, plus a CLI entry point appended below it. Reaches its context by calling <span class="mono">invoke_data_agent</span> through a LangChain agent loop, so it costs two or more calls per question rather than one. Its value is fidelity: what works here can be ported to production as a patch.</p>
+    </div>
+
+    <h3>Supporting</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Script</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">scripts/json_schema_generator.py</td><td>Writes <span class="mono">payload_source/schema.json</span> — 50 tables with each column's BigQuery <b>data type</b>. Not currently consumed by generation; types are what you would add to stop string/date comparison errors.</td></tr>
+          <tr><td class="mono">scripts/main.py</td><td>Connection smoke test. One tiny prompt, prints reply and token counts. Run it first when something breaks, to separate a bad key or model from a bad pipeline.</td></tr>
+          <tr><td class="mono">test.py</td><td>Scaled-down twin of stage 1 over four inline sample tables, <span class="mono">BATCH_SIZE = 2</span>. For learning the batching pattern without spending tokens on 948 columns.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="artifacts">
+    <div class="sec-head reveal"><span class="sec-num">09</span><div><h2>Data artifacts</h2><p>What the pipeline produces and who reads it.</p></div></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Path</th><th>Shape</th><th>Produced by</th><th>Consumed by</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">output/data_dictionary.json</td><td><span class="mono">{domain, source_file, total_tables, total_columns, columns[]}</span></td><td>stage 1</td><td>stage 3, validate.py</td></tr>
+          <tr><td class="mono">output/data_dictionary.csv</td><td>Same rows, spreadsheet-friendly</td><td>stage 1</td><td>humans</td></tr>
+          <tr><td class="mono">metric_catalogue/metric_catalogue.json</td><td><span class="mono">{total_metrics, metrics[{metric_id, metric_name, definition}]}</span></td><td>stage 2</td><td>stage 3</td></tr>
+          <tr><td class="mono">payload_source/schema.json</td><td><span class="mono">{tables[{table_name, columns[{column_name, data_type}]}]}</span></td><td>json_schema_generator</td><td>nothing yet</td></tr>
+          <tr><td class="mono">sql/&lt;slug&gt;_&lt;timestamp&gt;.sql</td><td>Query plus a two-line <span class="mono">--</span> header naming the question, time and model</td><td>stage 3</td><td>humans, dashboards</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>Filenames are derived from the question by <span class="mono">make_slug()</span>, which lowercases, strips non-alphanumerics, drops stop words and keeps eight words: <i>"What is ARPU for the last 30 days?"</i> becomes <span class="mono">arpu_last_30_days</span>. A timestamp is appended so re-asking never overwrites an earlier answer.</p>
+    </div>
+
+    <h3>Context budget</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Block</th><th>Characters</th><th>Approx. tokens</th></tr></thead>
+        <tbody>
+          <tr><td>Schema — 50 tables, 948 columns</td><td class="mono">88,914</td><td class="mono">~22,200</td></tr>
+          <tr><td>Metrics — 49 definitions</td><td class="mono">20,324</td><td class="mono">~5,100</td></tr>
+          <tr><td>Rules + reminder</td><td class="mono">8,579</td><td class="mono">~2,100</td></tr>
+          <tr><td><b>Agent tool response, total</b></td><td class="mono"><b>117,938</b></td><td class="mono"><b>~29,500</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p>Everything is sent every time, with no keyword filtering. That is a deliberate trade: filtering would be cheaper, but a missed keyword would silently starve the model of the one table it needed — a far harder failure to debug than a larger bill.</p>
+    </div>
+  </section>
+
+  <section id="deps">
+    <div class="sec-head reveal"><span class="sec-num">10</span><div><h2>Dependencies and environment</h2><p>Four declared packages, 47 installed with transitives.</p></div></div>
+
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Package</th><th>Constraint</th><th>Needed by</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">openai</td><td class="mono">&gt;=1.0</td><td>stages 1 and 3 (simple), main, test</td><td>Chat completions against the OpenRouter endpoint</td></tr>
+          <tr><td class="mono">python-dotenv</td><td class="mono">&gt;=1.0</td><td>everything</td><td>Loads <span class="mono">.env</span> with <span class="mono">encoding="utf-8-sig"</span></td></tr>
+          <tr><td class="mono">langchain</td><td class="mono">&gt;=1.3,&lt;2</td><td>agent only</td><td><span class="mono">create_agent(model, tools, system_prompt)</span></td></tr>
+          <tr><td class="mono">langchain-openai</td><td class="mono">&gt;=1.6,&lt;2</td><td>agent only</td><td><span class="mono">ChatOpenAI</span> for <span class="mono">get_llm()</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose reveal">
+      <p><span class="mono">langchain</span> pulls <span class="mono">langgraph</span>, <span class="mono">langchain-core</span> and <span class="mono">pydantic</span>; the agent's compiled graph is a <span class="mono">CompiledStateGraph</span>. Installed total is 47 packages, up from 17 before the agent path existed — the entire increase belongs to the agent.</p>
+    </div>
+
+    <h3>Configuration</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Setting</th><th>Where</th><th>Required</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">OPENROUTER_API_KEY</td><td class="mono">.env</td><td><span class="pill config">yes</span></td><td>Stages 1 and 3 exit with a clear message without it</td></tr>
+          <tr><td class="mono">BQ_EXPORT_CSV</td><td class="mono">.env</td><td><span class="pill shim">optional</span></td><td>Stage 1 input; falls back to a hardcoded path</td></tr>
+          <tr><td class="mono">OPENROUTER_MODEL</td><td class="mono">.env</td><td><span class="pill shim">optional</span></td><td>Read only by <span class="mono">geoplay/config.py</span>; the scripts hardcode <span class="mono">MODEL</span></td></tr>
+          <tr><td class="mono">GAME_ID</td><td class="mono">.env</td><td><span class="pill shim">optional</span></td><td>Set: filter to that game. Blank: GROUP BY tenant columns instead</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn reveal"><span class="mk">Environment trap, from experience</span><p>The repo ships a <span class="mono">.venv</span> that was created empty — no packages, not even <span class="mono">pip</span>, and <span class="mono">include-system-site-packages = false</span>. Running the pipeline from inside it fails with <span class="mono">ModuleNotFoundError: No module named 'dotenv'</span> even though the system Python has it, because <span class="mono">run_pipeline.py</span> correctly propagates <span class="mono">sys.executable</span> to its children. Install with <span class="mono">uv pip install --python .venv/Scripts/python.exe -r requirements.txt</span>; the venv has no <span class="mono">pip</span>, so <span class="mono">python -m pip</span> will not work.</p></div>
+
+    <h3>External resources</h3>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>Resource</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">openrouter.ai/api/v1</td><td>LLM gateway for every model call, both paths</td></tr>
+          <tr><td>BigQuery schema export CSV</td><td>Stage 1 input. A <span class="mono">bquxjob_*</span> export of <span class="mono">INFORMATION_SCHEMA</span></td></tr>
+          <tr><td>Production repo <span class="mono">geo-play-intel</span></td><td>Source of the agent class, and of the aggregation-safety rules ported from its SQL agent prompt</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="limits">
+    <div class="sec-head reveal"><span class="sec-num">11</span><div><h2>Known limits</h2><p>What this design does not do, stated plainly.</p></div></div>
+
+    <div class="prose reveal">
+      <p><b>Generated SQL is never executed.</b> No warehouse connection exists in this repo. Table and column names are checked against the data dictionary; semantics are reviewed by reading. A query can pass every check and still be wrong. BigQuery's <span class="mono">dryRun</span> flag — which validates and resolves identifiers without executing or charging — is the highest-value unbuilt addition.</p>
+      <p><b>Column values are unknown.</b> The dictionary supplies names and descriptions, never values or sample rows. Any literal comparison is a guess, which is why they are surfaced under <span class="mono">review</span> rather than trusted.</p>
+      <p><b>Four of ten rule sections have no check.</b> <span class="mono">APPROACH</span>, <span class="mono">CHOOSING THE TABLE</span>, <span class="mono">NUMERATOR AND DENOMINATOR</span> and most of <span class="mono">OUTPUT SHAPE</span> are enforced by prompt alone. "All checks passed" means "passes the checks that exist".</p>
+      <p><b>The tenant check is inert by default.</b> <span class="mono">check_game_filter</span> only fires when <span class="mono">GAME_ID</span> is set. With it blank, the rule called the largest correctness hole is prompt-enforced only.</p>
+      <p><b>Descriptions are model output.</b> Stage 1's 948 descriptions are plausible, not authoritative. The <span class="mono">confidence</span> field exists for that reason and the 100 medium and low rows are worth reading by hand.</p>
+      <p><b>The metric catalogue is authored here.</b> Its <span class="mono">metric_id</span> values were written for this project and may not match the warehouse's own <span class="mono">dim_metric.metric_id</span>. Two warehouse queries would settle it, and until they do, resolving ids by name rather than assuming them is the safer path.</p>
+      <p><b>No evaluation fixtures.</b> Rule changes are still assessed by generating a few queries and reading them. In practice a change has repeatedly fixed one thing and broken another, and three times a rule change left the validator contradicting it. A fixed list of questions with recorded expectations, re-run on every change, is the missing piece — and the single highest-leverage thing left to build.</p>
+    </div>
+
+    <div class="callout key reveal"><span class="mk">Design principle worth carrying forward</span><p>Every rule in <span class="mono">rules.py</span> exists because a real query got something wrong, and the durable fixes were the ones that paired a rule with a check. Prompt-only rules degrade as the rule set grows and compete with each other for attention; a rule with a deterministic check behind it does not.</p></div>
+  </section>
+
+</main>
+<script>
+(function(){
+  var root=document.documentElement, KEY="wa-portability-theme";
+  function systemDark(){return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;}
+  function apply(t){ if(t==="light"||t==="dark"){root.setAttribute("data-theme",t);} else {root.removeAttribute("data-theme");} }
+  var stored=null; try{stored=localStorage.getItem(KEY);}catch(e){}
+  if(stored) apply(stored);
+  var btn=document.getElementById("theme");
+  if(btn){ btn.addEventListener("click",function(){
+    var cur=root.getAttribute("data-theme")||(systemDark()?"dark":"light");
+    var next=cur==="dark"?"light":"dark";
+    apply(next); try{localStorage.setItem(KEY,next);}catch(e){}
+  });}
+
+  // scroll progress
+  var prog=document.getElementById("progress");
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    var p=max>0?(h.scrollTop/max)*100:0;
+    if(prog) prog.style.width=p+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+
+  // reveal on scroll
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revs=[].slice.call(document.querySelectorAll(".reveal"));
+  if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else{
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target);} });
+    },{rootMargin:"0px 0px -8% 0px",threshold:.08});
+    revs.forEach(function(e){io.observe(e);});
+  }
+
+  // scrollspy TOC
+  var links=[].slice.call(document.querySelectorAll("#toc a"));
+  var map={}; links.forEach(function(a){ var id=a.getAttribute("href").slice(1); map[id]=a; });
+  var secs=[].slice.call(document.querySelectorAll("main section[id]"));
+  if("IntersectionObserver" in window){
+    var so=new IntersectionObserver(function(en){
+      en.forEach(function(x){
+        if(x.isIntersecting){
+          links.forEach(function(l){l.classList.remove("active");});
+          var a=map[x.target.id]; if(a)a.classList.add("active");
+        }
+      });
+    },{rootMargin:"-45% 0px -50% 0px",threshold:0});
+    secs.forEach(function(s){so.observe(s);});
+  }
+
+  // interface table filter
+  var fbtns=[].slice.call(document.querySelectorAll("#ifilters .fbtn"));
+  var rows=[].slice.call(document.querySelectorAll("#itable tbody tr"));
+  fbtns.forEach(function(b){
+    b.addEventListener("click",function(){
+      fbtns.forEach(function(x){x.classList.remove("on");}); b.classList.add("on");
+      var f=b.getAttribute("data-f");
+      rows.forEach(function(r){
+        var show = f==="all" || r.getAttribute("data-s")===f;
+        r.classList.toggle("hide",!show);
+      });
+    });
+  });
+
+  // copy buttons
+  [].slice.call(document.querySelectorAll(".copy")).forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=b.getAttribute("data-code")||"";
+      try{ navigator.clipboard.writeText(t).then(function(){ var o=b.textContent; b.textContent="Copied ✓"; setTimeout(function(){b.textContent=o;},1400); }); }catch(e){}
+    });
+  });
+})();
+</script>

@@ -5,6 +5,7 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import datetime
 
 from langchain.agents import create_agent
@@ -15,6 +16,7 @@ from langchain.agents import create_agent
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from geoplay.config import get_llm
+from geoplay.rules import build_rules
 from geoplay.tools import invoke_data_agent
 
 
@@ -126,10 +128,13 @@ class NLToSQLAgent:
 
     def __init__(self, model=None):
         self._llm = model or get_llm()
+        # The production prompt stays verbatim as the prefix; the shared rules
+        # are appended so the planner has them from its first turn, rather than
+        # only on the second turn behind the schema the tool returns.
         self._agent = create_agent(
             model=self._llm,
             tools=[invoke_data_agent],
-            system_prompt=build_system_prompt(),
+            system_prompt=build_system_prompt() + "\n\n" + build_rules(),
         )
 
     async def generate_sql(self, nl_query):
@@ -212,14 +217,17 @@ if __name__ == "__main__":
 
     print(f"Question: {question}\n")
 
+    started = time.time()
     agent = NLToSQLAgent()
     sql = asyncio.run(agent.generate_sql(question))
 
     # Prompt rules are only a request. These checks read the finished SQL, and
     # anything they find is sent back to be corrected.
     from geoplay.rules import GAME_ID
-    from geoplay.validate import build_fix_request, hard_problems, report
+    from geoplay.telemetry import record
+    from geoplay.validate import build_fix_request, hard_problems, report, validate
 
+    retries_used = 0
     for attempt in range(1, MAX_FIX_ATTEMPTS + 2):
         problems = hard_problems(sql, GAME_ID)
         if not problems:
@@ -236,9 +244,20 @@ if __name__ == "__main__":
 
         follow_up = question + "\n\n" + build_fix_request(sql, problems)
         sql = asyncio.run(agent.generate_sql(follow_up))
+        retries_used = attempt
 
     print(sql)
     print()
     report(sql, GAME_ID)
+
+    record(
+        question=question,
+        sql=sql,
+        model=agent._llm.model_name,
+        problems=validate(sql, GAME_ID),
+        retries=retries_used,
+        seconds=round(time.time() - started, 1),
+        generator="agent",
+    )
 
     print(f"\nSaved to {save_sql(sql, question)}")

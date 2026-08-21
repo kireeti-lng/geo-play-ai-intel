@@ -1,0 +1,165 @@
+{
+  "note": "Expectations recorded by hand from queries reviewed during development. 'auto' fields are checked mechanically by run_evals.py; 'review' fields are for a human reading the SQL, because they cannot be verified from text alone.",
+  "questions": [
+    {
+      "id": "ecpm_trend",
+      "question": "What is the Ad eCPM (USD) trend?",
+      "auto": {
+        "grain": "time_series",
+        "window_columns": false,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_user_daily", "fact_ad_events"],
+        "max_joins": 1,
+        "max_ctes": 1
+      },
+      "review": {
+        "denominator": "ad impressions, not sessions or users",
+        "traps": [
+          "no date filter at all - 'trend' states no period",
+          "fact_user_daily already stores ad_revenue_usd and ad_impressions, so no COUNTIF on a guessed ad_event_type value is needed"
+        ]
+      }
+    },
+    {
+      "id": "d7_country",
+      "question": "What is the D7 retention by country for installs in the last 30 days?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["dim_user_profile", "dim_user"],
+        "max_joins": 3,
+        "max_ctes": 3
+      },
+      "review": {
+        "denominator": "cohort size fixed at install, not users active in the window",
+        "traps": [
+          "fact_retention_daily looks right but has NO country column, so it cannot answer this",
+          "cohorts younger than 7 days must be excluded or D7 is unmeasurable",
+          "table choice on this question flips run to run - the known non-determinism case"
+        ]
+      }
+    },
+    {
+      "id": "arpu_may_june",
+      "question": "What is ARPU in between the month of may and june?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_user_daily"],
+        "max_joins": 3,
+        "max_ctes": 4
+      },
+      "review": {
+        "denominator": "all active users in the period, not payers",
+        "traps": [
+          "no year is given - the year must be resolved from the data, per tenant, and only a year holding BOTH months is valid",
+          "one row per month unless a combined total was asked for",
+          "the numerator is all revenue in the window - do not apply the activity filter to it"
+        ]
+      }
+    },
+    {
+      "id": "session_len_platform",
+      "question": "What is the average session length by platform?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_sessions"],
+        "max_joins": 0,
+        "max_ctes": 1
+      },
+      "review": {
+        "denominator": "number of sessions",
+        "traps": [
+          "fact_sessions stores session_duration_sec - do not derive it from the two timestamps",
+          "no period is stated, so window columns are what tell the reader what it covers"
+        ]
+      }
+    },
+    {
+      "id": "arppu_7d",
+      "question": "What is ARPPU for the last 7 days?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_purchases", "fact_user_daily"],
+        "max_joins": 2,
+        "max_ctes": 3
+      },
+      "review": {
+        "denominator": "distinct PAYING users only - this is what separates ARPPU from ARPU",
+        "traps": [
+          "must not divide by all active users",
+          "fact_user_daily carries revenue_iap_usd and is_payer, so it answers this with no join at all - that is the better answer, not a miss"
+        ]
+      }
+    },
+    {
+      "id": "new_payers_may",
+      "question": "How many new payers were there in the month of may?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_purchases", "fact_user_daily"],
+        "max_joins": 3,
+        "max_ctes": 4
+      },
+      "review": {
+        "denominator": "none - this is a count, not a ratio",
+        "traps": [
+          "'new' means first-ever purchase, so a per-user MIN(event_date) is required",
+          "COUNT(*) over a per-user CTE is correct; COUNT(*) after joining back to a per-day table is not",
+          "the year must be resolved from the data and the month filter must not be left unbounded by year"
+        ]
+      }
+    },
+    {
+      "id": "sessions_per_dau",
+      "question": "How many sessions per DAU did we have yesterday?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_sessions", "fact_user_daily"],
+        "max_joins": 1,
+        "max_ctes": 2
+      },
+      "review": {
+        "denominator": "distinct active users on that day",
+        "traps": ["must not SUM a daily distinct count across days"]
+      }
+    },
+    {
+      "id": "tutorial_completion_platform",
+      "question": "What is the tutorial completion rate by platform for the last 14 days?",
+      "auto": {
+        "grain": "period",
+        "window_columns": true,
+        "tenant_columns": true,
+        "forbid_tables": ["agg_metrics_periodic", "mart_metrics", "mart_metrics_cohort"],
+        "expect_any_table": ["fact_ftue_steps"],
+        "max_joins": 2,
+        "max_ctes": 3
+      },
+      "review": {
+        "denominator": "users who STARTED the tutorial, not installs",
+        "traps": [
+          "narrower than FTUE drop-off, which spans the wider onboarding path",
+          "any step-name string is a guessed value and should appear under review"
+        ]
+      }
+    }
+  ]
+}

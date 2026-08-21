@@ -21,7 +21,8 @@ from openai import OpenAI
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from geoplay.rules import GAME_ID, build_rules
-from geoplay.validate import build_fix_request, hard_problems, report
+from geoplay.telemetry import record
+from geoplay.validate import build_fix_request, hard_problems, report, validate
 
 # ---------------------------------------------------------------------------
 # CONFIGURATION
@@ -54,6 +55,9 @@ QUESTION = "Show ARPDAU by country for the last 7 days."
 
 # How many times to send failed checks back for correction before giving up.
 MAX_FIX_ATTEMPTS = 2
+
+# Set when a correction round runs, so telemetry can record it.
+retries_used = 0
 
 # ---------------------------------------------------------------------------
 # LOADING
@@ -266,10 +270,20 @@ for attempt in range(1, MAX_FIX_ATTEMPTS + 2):
 
     follow_up = question + "\n\n" + build_fix_request(sql, problems)
     sql = generate_sql(client, follow_up, system_prompt)
+    retries_used = attempt
 
 print(sql)
 print()
 report(sql, GAME_ID)
+
+record(
+    question=question,
+    sql=sql,
+    model=MODEL,
+    problems=validate(sql, GAME_ID),
+    retries=retries_used,
+    generator="simple",
+)
 
 saved_path = save_sql(sql, question)
 print(f"\nSaved to {saved_path}")

@@ -30,6 +30,17 @@ RATIO_HINTS = ["arpu", "arppu", "arpdau", "ecpm", "_rate", "retention", "convers
 # Date columns that must not be wrapped in a function inside WHERE or ON.
 DATE_COLUMNS = ["event_date", "full_date", "install_date", "obs_date", "period_start"]
 
+# Columns identifying the tenant a row belongs to.
+TENANT_COLUMNS = ["org_id", "game_id", "game_client_id"]
+
+# Flags that describe who is eligible, so they belong on the denominator only.
+ELIGIBILITY_HINTS = ["has_session", "is_active", "is_payer", "is_current"]
+
+# BigQuery dryRun needs warehouse credentials, which this repo does not have.
+# The check is registered but inert, so it can be switched on without
+# restructuring validate().
+DRY_RUN_ENABLED = False
+
 
 def load_dictionary():
     """Return {table_name: set of column names} from the data dictionary."""
@@ -187,6 +198,83 @@ def check_pruning(sql):
     return sorted(set(problems))
 
 
+def check_tenant_grouping(sql, game_id):
+    """With no single game configured, a result must not blend tenants.
+
+    Enforces the TENANT SCOPE rule in the case the game filter check cannot
+    cover: when GAME_ID is blank the query has to GROUP BY the tenant columns
+    instead. Only fires when the query aggregates and the table actually has
+    those columns.
+    """
+    if game_id:
+        return []  # check_game_filter covers the configured case
+
+    if not re.search(r"\bGROUP BY\b", sql, re.I):
+        return []  # nothing aggregated, nothing to blend
+
+    tables = load_dictionary()
+    reading = [t for t in tables if re.search(r"\b" + t + r"\b", sql, re.I)]
+    if not reading:
+        return []
+
+    # Which tenant columns exist on any table this query reads?
+    available = set()
+    for table in reading:
+        for column in TENANT_COLUMNS:
+            if column in tables[table]:
+                available.add(column)
+    if not available:
+        return []
+
+    tail = sql[sql.lower().rfind("group by"):]
+    missing = [c for c in sorted(available) if not re.search(r"\b" + c + r"\b", tail, re.I)]
+    if missing:
+        return ["not grouped by " + ", ".join(missing)
+                + " - the result blends tenants (set GAME_ID to filter instead)"]
+    return []
+
+
+def check_numerator_filter(sql):
+    """An eligibility filter belongs on the denominator, not the numerator.
+
+    SUM(IF(has_session, revenue, 0)) discards revenue booked on a day with no
+    session, which understates the metric. Enforces NUMERATOR AND DENOMINATOR.
+    """
+    problems = []
+    pattern = r"SUM\s*\(\s*(?:IF|CASE\s+WHEN)\s*\(?\s*([\w.()]*(?:" + "|".join(ELIGIBILITY_HINTS) + r")[\w.()]*)"
+    for flag in re.findall(pattern, sql, re.I):
+        problems.append(
+            f"SUM(IF({flag.strip()}, ...)) filters the numerator by an eligibility "
+            "flag - filter the denominator only and sum the numerator whole"
+        )
+    return sorted(set(problems))
+
+
+def check_complexity(sql):
+    """Report shape so bloat is visible. Informational, never a failure."""
+    ctes = len(find_cte_names(sql))
+    joins = len(re.findall(r"\bJOIN\b", sql, re.I))
+    lines = len([line for line in sql.splitlines() if line.strip()])
+
+    if ctes <= 2 and joins <= 2:
+        return []
+    return [f"shape: {ctes} CTEs, {joins} joins, {lines} lines "
+            "- check every table and CTE is needed"]
+
+
+def check_dry_run(sql):
+    """Placeholder for a BigQuery dryRun check.
+
+    dryRun validates a query and resolves every identifier without executing it
+    or being billed, which would catch the wrong-but-valid SQL these text checks
+    cannot see. It needs warehouse credentials, so this returns nothing until
+    DRY_RUN_ENABLED is switched on and the client is wired in here.
+    """
+    if not DRY_RUN_ENABLED:
+        return []
+    return []
+
+
 def check_summed_ratios(sql):
     """SUM() over a ratio-looking column is an aggregation error."""
     problems = []
@@ -262,14 +350,19 @@ def validate(sql, game_id=""):
         "summed ratios": check_summed_ratios(body),
         "fan-out count": check_fanout_count(body),
         "pruning": check_pruning(body),
+        "tenant grouping": check_tenant_grouping(body, game_id),
+        "numerator filter": check_numerator_filter(body),
+        "dry run": check_dry_run(body),
         "review": check_assumed_values(body),
+        "shape": check_complexity(body),
     }
     return {name: found for name, found in results.items() if found}
 
 
-# "review" lists value assumptions for a human to confirm. It is information,
-# not a defect, so it must never trigger a retry.
-INFORMATIONAL = ["review"]
+# These describe the query for a human to weigh rather than reporting a defect,
+# so they must never trigger a retry. "review" lists guessed literal values;
+# "shape" reports CTE and join counts.
+INFORMATIONAL = ["review", "shape"]
 
 
 def hard_problems(sql, game_id=""):

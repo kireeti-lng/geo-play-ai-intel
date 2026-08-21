@@ -71,11 +71,21 @@ async def invoke_data_agent(query: str) -> str:
     Returns:
         The tables and columns that exist, plus the definition of every metric.
     """
+    # Order matters twice over.
+    #
+    # Everything static comes first, so the ~118,000 characters of rules, schema
+    # and reminder are byte-identical on every request and can be served from
+    # the provider's prompt cache. Interpolating the question at the top - as
+    # this did originally - left only 33 characters of shared prefix and made
+    # the whole message uncacheable.
+    #
+    # The question then comes last, where it is freshest, with the reminder just
+    # before it so the load-bearing rules stay close to the end too.
     return (
-        f"Question being planned: {query}\n\n"
-        + build_rules()
+        build_rules()
         + "\n\n"
         + build_context()
         + "\n\n"
         + build_reminder()
+        + f"\n\nQuestion being planned: {query}"
     )
